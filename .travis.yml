@@ -1,0 +1,19 @@
+sudo: false
+language: node_js
+node_js:
+  - lts/*
+
+cache:
+  directories:
+    - node_modules
+
+install:
+  - npm install -g pnpm
+  - pnpm install
+
+script:
+  - pnpm lint
+  - pnpm test
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

@@ -1,0 +1,15 @@
+{
+  "root": true,
+
+  "parserOptions": {
+    "parser": "babel-eslint",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+
+  "extends": ["standard-with-typescript"],
+
+  "rules": {
+    "quotes": ["error", "single"]
+  }
+}
