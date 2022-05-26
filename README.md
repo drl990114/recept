@@ -1,5 +1,7 @@
-[![LICENSE](https://img.shields.io/github/license/bubkoo/html-to-image?style=flat-square)](./LICENSE)
-![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)
-[![codecov](https://codecov.io/gh/halodong/ts-starter/branch/main/graph/badge.svg?token=8NNFFY8KNT)](https://codecov.io/gh/halodong/ts-starter)
+[![LICENSE](https://img.shields.io/github/license/halodong/sreact?style=flat-square)](./LICENSE)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/halodong/sreact)
+[![Build Status](https://app.travis-ci.com/halodong/sreact.svg?branch=main)](https://app.travis-ci.com/halodong/sreact)
+[![codecov](https://codecov.io/gh/halodong/sreact/branch/main/graph/badge.svg?token=8NNFFY8KNT)](https://codecov.io/gh/halodong/sreact)
 
-pkgName
+(WIP)sreact
+small react-like library
