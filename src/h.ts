@@ -1,19 +1,24 @@
 import { SReactElement } from './types'
 
-export const h = (type: any, props: any = {}, ...kids: any): SReactElement => {
-  const key = Boolean(props?.key) || null
-  const ref = Boolean(props?.ref) || null
-  return createElement(type, props, key, ref)
+export const h = (type: any, props: any = {}, ...children: any): SReactElement => {
+  console.log('createElement', children)
+  return createElement(type, props, children)
 }
 
 const createElement = (
   type: any,
   props: any,
-  key: any,
-  ref: any
+  children: any[]
 ): SReactElement => ({
   type,
-  props,
-  key,
-  ref
+  props: {
+    ...props,
+    children: children.map((child: any) => {
+      return typeof child === 'object'
+        ? child
+        : {
+            props: { text: child, children: [] }
+          }
+    })
+  }
 })
