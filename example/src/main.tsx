@@ -3,6 +3,9 @@ import { h, render } from '../../src'
 import './index.css'
 
 export default function App() {
-  return <div><div>11</div></div>
+  return <div key="A1">
+    <div key="B1">11</div>
+    <div key="B2">11</div>
+  </div>
 }
-render(<App key="1"/>, document.getElementById('root')!)
+render(<App key="root"/>, document.getElementById('root')!)
