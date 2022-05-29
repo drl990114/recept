@@ -1,3 +1,4 @@
+import { ELEMENT_TEXT } from './constants'
 import { SReactElement, SReactFiber } from './types'
 
 export const mountFiber = (parentDOM: Node, fiber: SReactFiber, nextDOM: Node): void => {
@@ -11,7 +12,7 @@ export const mountFiber = (parentDOM: Node, fiber: SReactFiber, nextDOM: Node): 
 
 export const createDOM = (fiberOrVom: SReactFiber | SReactElement): Node => {
   const dom =
-  fiberOrVom.type === '#text'
+  fiberOrVom.type === ELEMENT_TEXT
     ? document.createTextNode(fiberOrVom.props.text)
     : document.createElement(fiberOrVom.type as string)
   updateDOM(dom, {}, fiberOrVom.props)
@@ -19,7 +20,7 @@ export const createDOM = (fiberOrVom: SReactFiber | SReactElement): Node => {
   return dom
 }
 
-const updateDOM = (stateNode: HTMLElement | Text, oldProps: any, newProps: any): void => {
+export const updateDOM = (stateNode: HTMLElement | Text, oldProps: any, newProps: any): void => {
   if (stateNode instanceof Text) return
   if (oldProps == null) {
     Object.keys(newProps).forEach(keyName => {
