@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { giveTag } from './utils'
 import { SReactFiber } from './types'
+import { PLACEMENT, UPDATE } from './constants'
 
 export function reconcileChildren (current: SReactFiber | null, returnFiber: SReactFiber, newChildren: any[]): void {
   console.log('应该构建此fiber的子fiber树', current, returnFiber, newChildren)
@@ -19,7 +20,11 @@ export function reconcileChildren (current: SReactFiber | null, returnFiber: SRe
       if (oldFiber?.alternate != null) {
         newFiber = oldFiber.alternate
         newFiber.props = newChild.props
+        newFiber.effectTag = UPDATE
         newFiber.alternate = oldFiber
+        newFiber.nextEffect = null
+        newFiber.firstEffect = null
+        newFiber.lastEffect = null
       } else {
         newFiber = {
           tag: oldFiber.tag,
@@ -27,7 +32,11 @@ export function reconcileChildren (current: SReactFiber | null, returnFiber: SRe
           props: newChild.props,
           stateNode: oldFiber.stateNode,
           return: returnFiber,
-          alternate: oldFiber
+          effectTag: UPDATE,
+          alternate: oldFiber,
+          nextEffect: null,
+          firstEffect: null,
+          lastEffect: null
         }
       }
     } else {
@@ -37,8 +46,12 @@ export function reconcileChildren (current: SReactFiber | null, returnFiber: SRe
           tag: newChild.tag, // worktag
           type: newChild.type,
           props: newChild.props,
+          effectTag: PLACEMENT,
           stateNode: null,
-          return: returnFiber
+          return: returnFiber,
+          nextEffect: null,
+          firstEffect: null,
+          lastEffect: null
         }
       }
     }

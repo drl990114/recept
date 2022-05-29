@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SReactFiber } from './types'
 import { beginWork } from './beginWork'
@@ -9,7 +10,7 @@ let nextUnitOfWork: any = null
 const currentRoot: any = null
 
 export const render = (vdom: any, node: Node): void => {
-  const rootFiber: SReactFiber = {
+  const rootFiber: any = {
     tag: HostRoot,
     stateNode: node,
     props: { children: [vdom] }
@@ -38,17 +39,40 @@ export const scheduleRoot = (rootFiber: SReactFiber): void => { // {tag:TAG_ROOT
     // first render
     workInProgressRoot = rootFiber
   }
+  workInProgressRoot.firstEffect = workInProgressRoot.lastEffect = workInProgressRoot.nextEffect = null
   nextUnitOfWork = workInProgressRoot
 }
+const completeUnitOfWork = (currentFiber: SReactFiber): void => {
+  const returnFiber = currentFiber.return
+  if (returnFiber != null) {
+    if (!returnFiber.firstEffect) {
+      returnFiber.firstEffect = currentFiber.firstEffect
+    }
+    if (currentFiber.lastEffect) {
+      if (returnFiber.lastEffect) {
+        returnFiber.lastEffect.nextEffect = currentFiber.firstEffect
+      }
+      returnFiber.lastEffect = currentFiber.lastEffect
+    }
+    const effectTag = currentFiber.effectTag
+    if (effectTag) {
+      if (returnFiber.lastEffect) {
+        returnFiber.lastEffect.nextEffect = currentFiber
+      } else {
+        returnFiber.firstEffect = currentFiber
+      }
+      returnFiber.lastEffect = currentFiber
+    }
+  }
+}
 const performUnitOfWork = (unitOfWorkFiber: any): any => {
-  //
   beginWork(unitOfWorkFiber.alternate, unitOfWorkFiber)
   if (unitOfWorkFiber.child != null) {
     return unitOfWorkFiber.child
   }
 
   while (unitOfWorkFiber != null) {
-    // TODO completeUnitOfWork(unitOfWorkFiber)
+    completeUnitOfWork(unitOfWorkFiber)
     if (unitOfWorkFiber.sibling != null) {
       return unitOfWorkFiber.sibling
     }

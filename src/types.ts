@@ -13,6 +13,14 @@ export interface SReactFiber<P = any> {
   sibling?: SReactFiber<P>
   child?: SReactFiber<P>
   alternate?: SReactFiber<P> // old
-  effectTag?: string
+  effectTag?: symbol
   stateNode?: Node | null
+  // Singly linked list fast path to the next fiber with side-effects.
+  nextEffect: SReactFiber | null
+
+  // The first and last fiber with side-effect within this subtree. This allows
+  // us to reuse a slice of the linked list when we reuse the work done within
+  // this fiber.
+  firstEffect: SReactFiber | null
+  lastEffect: SReactFiber | null
 }
