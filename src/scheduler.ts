@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SReactFiber } from './types'
 import { beginWork } from './beginWork'
-import { HostRoot } from './workTags'
+import { HostRoot } from './constants'
 
 let workInProgress: any = null
 let workInProgressRoot: any = null

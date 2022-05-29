@@ -3,7 +3,7 @@ import { renderWithHooks } from './hooks'
 import { reconcileChildren } from './reconciler'
 import { SReactFiber } from './types'
 import { isArr } from './utils'
-import { FunctionComponent, HostComponent, HostRoot } from './workTags'
+import { FunctionComponent, HostComponent, HostRoot } from './constants'
 
 export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): any => {
   if (current != null) {

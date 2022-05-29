@@ -1,4 +1,4 @@
-import { FunctionComponent, HostComponent } from './workTags'
+import { FunctionComponent, HostComponent } from './constants'
 
 export const giveTag = (fiber: any): any => {
   if (fiber?.tag != null) return fiber
