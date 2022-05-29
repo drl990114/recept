@@ -3,7 +3,7 @@ import { renderWithHooks } from './hooks'
 import { reconcileChildren } from './reconciler'
 import { SReactFiber } from './types'
 import { isArr } from './utils'
-import { FunctionComponent, HostComponent, HostRoot } from './constants'
+import { FunctionComponent, HostComponent, HostRoot, TextNode } from './constants'
 
 export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): any => {
   if (current != null) {
@@ -29,6 +29,8 @@ export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): an
         )
       case HostComponent:
         return mountHost(current, workInProgress)
+      case TextNode:
+        return mountHostText(current, workInProgress)
       default:
         break
     }
@@ -68,5 +70,10 @@ const mountHost = (current: SReactFiber | null, workInProgress: SReactFiber): vo
   reconcileChildren(current, workInProgress, newChildren)
 }
 
+const mountHostText = (currentFiber: SReactFiber | null, workInProgress: SReactFiber): void => {
+  if (workInProgress.stateNode == null) {
+    workInProgress.stateNode = createDOM(workInProgress)
+  }
+}
 // tool
 const wrapChild = (children: any): any[] => isArr(children) ? children : [children]
