@@ -3,11 +3,13 @@
 import { SReactFiber } from './types'
 import { beginWork } from './beginWork'
 import { HostRoot } from './constants'
+import { commitRoot } from './commit'
 
 let workInProgress: any = null
 let workInProgressRoot: any = null
 let nextUnitOfWork: any = null
-const currentRoot: any = null
+const deletions: any[] = []
+let currentRoot: any = null
 
 export const render = (vdom: any, node: Node): void => {
   const rootFiber: any = {
@@ -89,7 +91,9 @@ const workLoop = (deadline: IdleDeadline): void => {
   }
   if (nextUnitOfWork == null && workInProgressRoot != null) {
     console.log('render阶段结束', workInProgressRoot)
-    // TODO commitRoot()
+    commitRoot(workInProgressRoot, deletions)
+    currentRoot = workInProgressRoot// 把当前渲染成功的根fiber 赋给currentRoot
+    workInProgressRoot = null
   }
   requestIdleCallback(workLoop, { timeout: 500 })
 }
