@@ -90,8 +90,9 @@ const workLoop = (deadline: IdleDeadline): void => {
     shouldYield = deadline.timeRemaining() < 1
   }
   if (nextUnitOfWork == null && workInProgressRoot != null) {
-    console.log('render阶段结束', workInProgressRoot)
+    console.log('fiber构造结束', workInProgressRoot)
     commitRoot(workInProgressRoot, deletions)
+    console.log('渲染阶段结束', workInProgressRoot)
     currentRoot = workInProgressRoot// 把当前渲染成功的根fiber 赋给currentRoot
     workInProgressRoot = null
   }

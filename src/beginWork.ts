@@ -3,7 +3,7 @@ import { renderWithHooks } from './hooks'
 import { reconcileChildren } from './reconciler'
 import { SReactFiber } from './types'
 import { isArr } from './utils'
-import { FunctionComponent, HostComponent, HostRoot, TextNode } from './constants'
+import { FunctionComponent, HostComponent, HostRoot, HostText } from './constants'
 
 export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): any => {
   if (current != null) {
@@ -29,7 +29,7 @@ export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): an
         )
       case HostComponent:
         return mountHost(current, workInProgress)
-      case TextNode:
+      case HostText:
         return mountHostText(current, workInProgress)
       default:
         break

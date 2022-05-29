@@ -1,4 +1,4 @@
-import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, TextNode, UPDATE } from './constants'
+import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE } from './constants'
 import { updateDOM } from './dom'
 import { SReactFiber } from './types'
 
@@ -15,7 +15,7 @@ export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): v
 const commitWork = (currentFiber: SReactFiber | null): void => {
   if (currentFiber == null) return
   let returnFiber = currentFiber.return
-  while (returnFiber?.tag !== TextNode &&
+  while (returnFiber?.tag !== HostText &&
       returnFiber?.tag !== HostRoot &&
       returnFiber?.tag !== HostComponent) {
     returnFiber = returnFiber?.return
@@ -23,7 +23,7 @@ const commitWork = (currentFiber: SReactFiber | null): void => {
   const domReturn = returnFiber.stateNode as Node
   if (currentFiber.effectTag === PLACEMENT) { // 新增加节点
     let nextFiber = currentFiber
-    while (nextFiber.tag !== HostComponent && nextFiber.tag !== TextNode) {
+    while (nextFiber.tag !== HostComponent && nextFiber.tag !== HostText) {
       (currentFiber.child != null) && (nextFiber = currentFiber.child)
     }
     ;(nextFiber.stateNode != null) && domReturn.appendChild(nextFiber.stateNode)
@@ -42,7 +42,7 @@ const commitWork = (currentFiber: SReactFiber | null): void => {
   currentFiber.effectTag = null
 }
 const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node): void => {
-  if (currentFiber.tag === HostComponent || currentFiber.tag === TextNode) {
+  if (currentFiber.tag === HostComponent || currentFiber.tag === HostText) {
     (currentFiber.stateNode != null) && domReturn.removeChild(currentFiber.stateNode)
   } else {
     if (currentFiber?.child != null) {

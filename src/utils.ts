@@ -1,11 +1,11 @@
-import { ELEMENT_TEXT, FunctionComponent, HostComponent, TextNode } from './constants'
+import { ELEMENT_TEXT, FunctionComponent, HostComponent, HostText } from './constants'
 
 export const giveTag = (fiber: any): void => {
   if (fiber?.tag != null) return fiber
   if (typeof fiber.type === 'function') {
     fiber.tag = FunctionComponent
   } else if (fiber.type === ELEMENT_TEXT) {
-    fiber.tag = TextNode
+    fiber.tag = HostText
   } else {
     fiber.tag = HostComponent
   }

@@ -2,7 +2,7 @@
 export const HostRoot /**               */ = 0
 export const FunctionComponent /**      */ = 1
 export const HostComponent /**          */ = 2
-export const TextNode /**               */ = 3
+export const HostText /**               */ = 3
 
 // effect flag
 export const PLACEMENT /**              */ = Symbol.for('PLACEMENT')
