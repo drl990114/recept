@@ -13,7 +13,7 @@ export interface SReactFiber<P = any> {
   sibling?: SReactFiber<P>
   child?: SReactFiber<P>
   alternate?: SReactFiber<P> // old
-  effectTag?: symbol
+  effectTag?: symbol | null
   stateNode?: Node | null
   // Singly linked list fast path to the next fiber with side-effects.
   nextEffect: SReactFiber | null
