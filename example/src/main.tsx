@@ -4,14 +4,12 @@ import './index.css'
 
 export default function App() {
   const [counter, setCounter] = useState(0)
-
+  console.log('counter',counter)
   return (
     <div key="A1">
-      <div key="B1">11</div>
-      <div key="B2">
-        <button key="C1" onClick={()=>setCounter(counter+1)}>+</button>
+      <div key="B1" style={{fontSize: '30px'}}>计数器</div>
+      <button key="C1" onClick={()=>setCounter(counter+1)}>+</button>
         counter: <span>{counter}</span>
-      </div>
     </div>
   )
 }
