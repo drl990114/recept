@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { giveTag } from './utils'
 import { SReactFiber } from './types'
-import { PLACEMENT, UPDATE } from './constants'
+import { DELETION, PLACEMENT, UPDATE } from './constants'
+import { deletions } from './scheduler'
 
 export function reconcileChildren (current: SReactFiber | null, returnFiber: SReactFiber, newChildren: any[]): void {
   console.log('应该构建此fiber的子fiber树', current, returnFiber, newChildren)
@@ -54,6 +55,11 @@ export function reconcileChildren (current: SReactFiber | null, returnFiber: SRe
           lastEffect: null
         }
       }
+    }
+
+    if (oldFiber && !sameType) {
+      oldFiber.effectTag = DELETION
+      deletions.push(oldFiber)
     }
 
     if (oldFiber != null) {

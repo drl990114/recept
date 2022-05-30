@@ -8,7 +8,7 @@ import { commitRoot } from './commit'
 let workInProgress: any = null
 let workInProgressRoot: any = null
 let nextUnitOfWork: any = null
-const deletions: any[] = []
+export const deletions: any[] = []
 let currentRoot: any = null
 
 export const render = (vdom: any, node: Node): void => {
