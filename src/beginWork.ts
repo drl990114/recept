@@ -6,14 +6,21 @@ import { isArr } from './utils'
 import { FunctionComponent, HostComponent, HostRoot, HostText } from './constants'
 
 export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): any => {
+  console.log('beginwork', current, workInProgress)
   if (current != null) {
     switch (workInProgress.tag) {
+      case HostRoot:
+        return updateHostRoot(current, workInProgress)
       case FunctionComponent:
         return updateFunctionComponent(
           current,
           workInProgress,
           workInProgress.type
         )
+      case HostComponent:
+        return updateHost(current, workInProgress)
+      case HostText:
+        return updateHostText(current, workInProgress)
       default:
         break
     }
@@ -46,6 +53,27 @@ const updateFunctionComponent = (current: any, workInProgress: any, Component: a
   reconcileChildren(current, workInProgress, newChildren)
   return workInProgress.child
 }
+
+const updateHostRoot = (current: SReactFiber|null, workInProgress: SReactFiber): void => {
+  const newChildren = wrapChild(workInProgress.props.children)// [element=<div id="A1"]
+  reconcileChildren(current, workInProgress, newChildren)
+}
+
+const updateHost = (current: SReactFiber | null, workInProgress: SReactFiber): void => {
+  if (workInProgress.stateNode == null) {
+    workInProgress.stateNode = createDOM(workInProgress)
+  }
+  const newChildren = wrapChild(workInProgress.props.children)
+  reconcileChildren(current, workInProgress, newChildren)
+}
+
+const updateHostText = (currentFiber: SReactFiber | null, workInProgress: SReactFiber): void => {
+  if (workInProgress.stateNode == null) {
+    workInProgress.stateNode = createDOM(workInProgress)
+  }
+}
+// mount
+// -------------------------------------------------------------------------------
 
 const mountFunctionComponent = (current: SReactFiber | null, workInProgress: SReactFiber, Component: Function): SReactFiber | undefined => {
   const children = wrapChild(renderWithHooks(
