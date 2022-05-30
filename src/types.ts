@@ -4,6 +4,9 @@ export interface SReactElement<P = any, T = string | Function> {
   props: P
 }
 
+export interface Ref<T = any> {
+  current: T
+}
 export interface SReactFiber<P = any> {
   key?: string
   type?: string | Function
@@ -23,4 +26,5 @@ export interface SReactFiber<P = any> {
   // this fiber.
   firstEffect: SReactFiber | null
   lastEffect: SReactFiber | null
+  memoizedState?: any // hook head node
 }
