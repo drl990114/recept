@@ -3,7 +3,6 @@ import { updateDOM } from './dom'
 import { SReactFiber } from './types'
 
 export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): void => {
-  debugger
   deletions.forEach(commitWork)
   let currentFiber = workInProgressRoot.firstEffect
   while (currentFiber != null) {

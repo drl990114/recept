@@ -7,7 +7,6 @@ import { deletions } from './scheduler'
 export function reconcileChildren (current: SReactFiber | null, returnFiber: SReactFiber, newChildren: any[]): void {
   console.log('应该构建此fiber的子fiber树', current, returnFiber, newChildren)
 
-  debugger
   let newChildIndex = 0
   let oldFiber = returnFiber.alternate?.child
   let prevSibling: SReactFiber | null = null
