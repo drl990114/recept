@@ -1,5 +1,6 @@
 import { ELEMENT_TEXT } from './constants'
 import { SReactElement, SReactFiber } from './types'
+import { setProps } from './utils'
 
 export const mountFiber = (parentDOM: Node, fiber: SReactFiber, nextDOM: Node): void => {
   const newDOM = createDOM(fiber)
@@ -22,11 +23,5 @@ export const createDOM = (fiberOrVom: SReactFiber | SReactElement): Node => {
 
 export const updateDOM = (stateNode: HTMLElement | Text, oldProps: any, newProps: any): void => {
   if (stateNode instanceof Text) return
-  if (oldProps == null) {
-    Object.keys(newProps).forEach(keyName => {
-      stateNode.setAttribute(keyName, newProps[keyName])
-    })
-  } else {
-    // TODO update
-  }
+  setProps(stateNode, oldProps, newProps)
 }
