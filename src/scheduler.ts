@@ -44,6 +44,14 @@ export const scheduleRoot = (rootFiber: SReactFiber): void => { // {tag:TAG_ROOT
   workInProgressRoot.firstEffect = workInProgressRoot.lastEffect = workInProgressRoot.nextEffect = null
   nextUnitOfWork = workInProgressRoot
 }
+
+export const scheduleUpdateOnFiber = (oldFiber: SReactFiber): any => {
+  const newFiber = {
+    ...oldFiber,
+    alternate: oldFiber
+  }
+  nextUnitOfWork = newFiber
+}
 const completeUnitOfWork = (currentFiber: SReactFiber): void => {
   const returnFiber = currentFiber.return
   if (returnFiber != null) {
