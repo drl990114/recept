@@ -45,11 +45,11 @@ export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): an
 }
 
 const updateFunctionComponent = (current: any, workInProgress: any, Component: any): any => {
-  const newChildren = renderWithHooks(
+  const newChildren = wrapChild(renderWithHooks(
     current,
     workInProgress,
     Component
-  )
+  ))
   reconcileChildren(current, workInProgress, newChildren)
   return workInProgress.child
 }
