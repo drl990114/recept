@@ -18,15 +18,15 @@ export const setProps = (dom: HTMLElement, oldProps: any, newProps: any): void =
   for (const key in oldProps) {
     if (key !== 'children') {
       if (Object.hasOwnProperty.call(newProps, key)) {
-        setProp(dom, key, newProps[key])// 新老都有，则更新
+        setProp(dom, key, newProps[key])
       } else {
-        dom.removeAttribute(key)// 老props里有此属性，新 props没有，则删除
+        dom.removeAttribute(key)
       }
     }
   }
   for (const key in newProps) {
     if (key !== 'children') {
-      if (!Object.hasOwnProperty.call(oldProps, key)) { // 老的没有，新的有，就添加此属性
+      if (!Object.hasOwnProperty.call(oldProps, key)) {
         setProp(dom, key, newProps[key])
       }
     }
@@ -36,8 +36,8 @@ const setProp = (dom: any, key: string, value: any): void => {
   if (key.toLowerCase() === 'classname') {
     key = 'class'
   }
-  if (/^on/.test(key)) { // onClick
-    dom[key.toLowerCase()] = value// 没有用合成事件
+  if (/^on/.test(key)) {
+    dom[key.toLowerCase()] = value
   } else if (key === 'style') {
     if (value != null) {
       for (const styleName in value) {
