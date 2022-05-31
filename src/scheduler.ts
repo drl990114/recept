@@ -51,30 +51,9 @@ export const scheduleUpdateOnFiber = (oldFiber: SReactFiber): any => {
     alternate: oldFiber
   }
   nextUnitOfWork = newFiber
+  workInProgress = newFiber
 }
-const completeUnitOfWork = (currentFiber: SReactFiber): void => {
-  const returnFiber = currentFiber.return
-  if (returnFiber != null) {
-    if (!returnFiber.firstEffect) {
-      returnFiber.firstEffect = currentFiber.firstEffect
-    }
-    if (currentFiber.lastEffect) {
-      if (returnFiber.lastEffect != null) {
-        returnFiber.lastEffect.nextEffect = currentFiber.firstEffect as any
-      }
-      returnFiber.lastEffect = currentFiber.lastEffect
-    }
-    const effectTag = currentFiber.effectTag
-    if (effectTag) {
-      if (returnFiber.lastEffect) {
-        returnFiber.lastEffect.nextEffect = currentFiber
-      } else {
-        returnFiber.firstEffect = currentFiber
-      }
-      returnFiber.lastEffect = currentFiber
-    }
-  }
-}
+
 const performUnitOfWork = (unitOfWorkFiber: any): any => {
   beginWork(unitOfWorkFiber.alternate, unitOfWorkFiber)
   if (unitOfWorkFiber.child != null) {
@@ -82,7 +61,6 @@ const performUnitOfWork = (unitOfWorkFiber: any): any => {
   }
 
   while (unitOfWorkFiber != null) {
-    completeUnitOfWork(unitOfWorkFiber)
     if (unitOfWorkFiber.sibling != null) {
       return unitOfWorkFiber.sibling
     }
@@ -103,6 +81,12 @@ const workLoop = (deadline: IdleDeadline): void => {
     console.log('渲染阶段结束', workInProgressRoot)
     currentRoot = workInProgressRoot// 把当前渲染成功的根fiber 赋给currentRoot
     workInProgressRoot = null
+    workInProgress = null
+  }
+  if (nextUnitOfWork == null && workInProgress != null) {
+    console.log('workinprogress', workInProgress)
+    commitRoot(workInProgress, deletions)
+    workInProgress = null
   }
   requestIdleCallback(workLoop, { timeout: 500 })
 }

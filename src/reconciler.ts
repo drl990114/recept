@@ -7,11 +7,9 @@ import { deletions } from './scheduler'
 
 export function reconcileChildren (current: SReactFiber | null, workInProgress: SReactFiber, newChildren: any[]): void {
   console.log('应该构建此fiber的子fiber树', current, workInProgress, newChildren)
-
   let newChildIndex = 0
-  let oldFiber = workInProgress.alternate?.child
+  let oldFiber = current?.child ?? workInProgress.alternate?.child
   let prevSibling: SReactFiber | null = null
-  if (oldFiber) oldFiber.firstEffect = oldFiber.lastEffect = oldFiber.nextEffect = null
 
   while (newChildIndex < newChildren.length || (oldFiber != null)) {
     const newChild = newChildren[newChildIndex]
@@ -24,7 +22,6 @@ export function reconcileChildren (current: SReactFiber | null, workInProgress: 
         newFiber.props = newChild.props
         newFiber.effectTag = UPDATE
         newFiber.alternate = oldFiber
-        newFiber.nextEffect = null
       } else {
         newFiber = {
           tag: oldFiber!.tag,
@@ -33,8 +30,7 @@ export function reconcileChildren (current: SReactFiber | null, workInProgress: 
           stateNode: oldFiber!.stateNode,
           return: workInProgress,
           effectTag: UPDATE,
-          alternate: oldFiber,
-          nextEffect: null
+          alternate: oldFiber
         }
       }
     } else {
@@ -46,10 +42,7 @@ export function reconcileChildren (current: SReactFiber | null, workInProgress: 
           props: newChild.props,
           effectTag: PLACEMENT,
           stateNode: null,
-          return: workInProgress,
-          nextEffect: null,
-          firstEffect: null,
-          lastEffect: null
+          return: workInProgress
         }
       }
       if (oldFiber) {
