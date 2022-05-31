@@ -33,6 +33,9 @@ export const setProps = (dom: HTMLElement, oldProps: any, newProps: any): void =
   }
 }
 const setProp = (dom: any, key: string, value: any): void => {
+  if (key.toLowerCase() === 'classname') {
+    key = 'class'
+  }
   if (/^on/.test(key)) { // onClick
     dom[key.toLowerCase()] = value// 没有用合成事件
   } else if (key === 'style') {
