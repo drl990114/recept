@@ -4,14 +4,10 @@ import { SReactFiber } from './types'
 
 export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): void => {
   deletions.forEach(commitWork)
-  let currentFiber = workInProgressRoot.firstEffect
-  while (currentFiber != null) {
-    commitWork(currentFiber)
-    currentFiber = currentFiber.nextEffect
-  }
+  commitWork(workInProgressRoot.child)
   deletions.length = 0
 }
-const commitWork = (currentFiber: SReactFiber | null): void => {
+const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
   if (currentFiber == null) return
   let returnFiber = currentFiber.return
   while (returnFiber?.tag !== HostText &&
@@ -39,6 +35,8 @@ const commitWork = (currentFiber: SReactFiber | null): void => {
     }
   }
   currentFiber.effectTag = null
+  commitWork(currentFiber.child)
+  commitWork(currentFiber.sibling)
 }
 const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node): void => {
   if (currentFiber.tag === HostComponent || currentFiber.tag === HostText) {
