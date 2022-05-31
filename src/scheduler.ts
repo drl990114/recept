@@ -59,8 +59,8 @@ const completeUnitOfWork = (currentFiber: SReactFiber): void => {
       returnFiber.firstEffect = currentFiber.firstEffect
     }
     if (currentFiber.lastEffect) {
-      if (returnFiber.lastEffect) {
-        returnFiber.lastEffect.nextEffect = currentFiber.firstEffect
+      if (returnFiber.lastEffect != null) {
+        returnFiber.lastEffect.nextEffect = currentFiber.firstEffect as any
       }
       returnFiber.lastEffect = currentFiber.lastEffect
     }

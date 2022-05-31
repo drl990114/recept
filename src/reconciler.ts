@@ -1,42 +1,40 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { giveTag } from './utils'
 import { SReactFiber } from './types'
 import { DELETION, PLACEMENT, UPDATE } from './constants'
 import { deletions } from './scheduler'
 
-export function reconcileChildren (current: SReactFiber | null, returnFiber: SReactFiber, newChildren: any[]): void {
-  console.log('应该构建此fiber的子fiber树', current, returnFiber, newChildren)
+export function reconcileChildren (current: SReactFiber | null, workInProgress: SReactFiber, newChildren: any[]): void {
+  console.log('应该构建此fiber的子fiber树', current, workInProgress, newChildren)
 
   let newChildIndex = 0
-  let oldFiber = returnFiber.alternate?.child
+  let oldFiber = workInProgress.alternate?.child
   let prevSibling: SReactFiber | null = null
+  if (oldFiber) oldFiber.firstEffect = oldFiber.lastEffect = oldFiber.nextEffect = null
 
   while (newChildIndex < newChildren.length || (oldFiber != null)) {
     const newChild = newChildren[newChildIndex]
     let newFiber: SReactFiber | null = null
     const sameType = (oldFiber != null) && newChild && oldFiber.type === newChild.type
     giveTag(newChild)
-    if (sameType && oldFiber != null) {
+    if (sameType) {
       if (oldFiber?.alternate != null) {
         newFiber = oldFiber.alternate
         newFiber.props = newChild.props
         newFiber.effectTag = UPDATE
         newFiber.alternate = oldFiber
         newFiber.nextEffect = null
-        newFiber.firstEffect = null
-        newFiber.lastEffect = null
       } else {
         newFiber = {
-          tag: oldFiber.tag,
-          type: oldFiber.type,
+          tag: oldFiber!.tag,
+          type: oldFiber!.type,
           props: newChild.props,
-          stateNode: oldFiber.stateNode,
-          return: returnFiber,
+          stateNode: oldFiber!.stateNode,
+          return: workInProgress,
           effectTag: UPDATE,
           alternate: oldFiber,
-          nextEffect: null,
-          firstEffect: null,
-          lastEffect: null
+          nextEffect: null
         }
       }
     } else {
@@ -48,17 +46,16 @@ export function reconcileChildren (current: SReactFiber | null, returnFiber: SRe
           props: newChild.props,
           effectTag: PLACEMENT,
           stateNode: null,
-          return: returnFiber,
+          return: workInProgress,
           nextEffect: null,
           firstEffect: null,
           lastEffect: null
         }
       }
-    }
-
-    if (oldFiber && !sameType) {
-      oldFiber.effectTag = DELETION
-      deletions.push(oldFiber)
+      if (oldFiber) {
+        oldFiber.effectTag = DELETION
+        deletions.push(oldFiber)
+      }
     }
 
     if (oldFiber != null) {
@@ -67,7 +64,7 @@ export function reconcileChildren (current: SReactFiber | null, returnFiber: SRe
 
     if (newFiber != null) {
       if (newChildIndex === 0) {
-        returnFiber.child = newFiber
+        workInProgress.child = newFiber
       } else {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         prevSibling!.sibling = newFiber
@@ -76,5 +73,5 @@ export function reconcileChildren (current: SReactFiber | null, returnFiber: SRe
     }
     newChildIndex++
   }
-  console.log('构建此fiber的子fiber树完成', returnFiber)
+  console.log('构建此fiber的子fiber树完成', workInProgress)
 }
