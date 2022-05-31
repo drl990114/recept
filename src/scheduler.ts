@@ -3,7 +3,7 @@
 import { SReactFiber } from './types'
 import { beginWork } from './beginWork'
 import { HostRoot } from './constants'
-import { commitRoot } from './commit'
+import { commitRoot, commitWork } from './commit'
 
 let workInProgress: any = null
 let workInProgressRoot: any = null
@@ -85,7 +85,7 @@ const workLoop = (deadline: IdleDeadline): void => {
   }
   if (nextUnitOfWork == null && workInProgress != null) {
     console.log('workinprogress', workInProgress)
-    commitRoot(workInProgress, deletions)
+    commitWork(workInProgress)
     workInProgress = null
   }
   requestIdleCallback(workLoop, { timeout: 500 })

@@ -7,7 +7,7 @@ export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): v
   commitWork(workInProgressRoot.child)
   deletions.length = 0
 }
-const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
+export const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
   if (currentFiber == null) return
   let returnFiber = currentFiber.return
   while (returnFiber?.tag !== HostText &&
