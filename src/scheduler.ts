@@ -41,7 +41,6 @@ export const scheduleRoot = (rootFiber: SReactFiber): void => { // {tag:TAG_ROOT
     // first render
     workInProgressRoot = rootFiber
   }
-  workInProgressRoot.firstEffect = workInProgressRoot.lastEffect = workInProgressRoot.nextEffect = null
   nextUnitOfWork = workInProgressRoot
 }
 
