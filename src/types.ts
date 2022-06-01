@@ -2,13 +2,15 @@ export type Key = string | number
 export interface SReactElement<P = any, T = string | Function> {
   type: T
   props: P
+  key?: number | string
 }
 
 export interface Ref<T = any> {
   current: T
 }
 export interface SReactFiber<P = any> {
-  key?: string
+  key?: number | string
+  index?: number
   type?: string | Function
   tag: number
   props?: any
