@@ -1,4 +1,4 @@
-import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE } from './constants'
+import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE, MOVE } from './constants'
 import { updateDOM } from './dom'
 import { SReactFiber } from './types'
 
@@ -33,6 +33,9 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
       updateDOM(currentFiber.stateNode as any,
         currentFiber.alternate?.props, currentFiber.props)
     }
+  } else if (currentFiber.effectTag === MOVE) {
+    // TODO 移动节点
+    console.log('需要移动节点')
   }
   currentFiber.effectTag = null
   commitWork(currentFiber.child)
