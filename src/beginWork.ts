@@ -1,6 +1,9 @@
 import { createDOM } from './dom'
 import { renderWithHooks } from './hooks'
-import { reconcileChildren } from './reconciler'
+import {
+  reconcileChildFibers,
+  mountChildFibers
+} from './reconciler'
 import { SReactFiber } from './types'
 import { FunctionComponent, HostComponent, HostRoot, HostText } from './constants'
 
@@ -49,13 +52,13 @@ const updateFunctionComponent = (current: any, workInProgress: any, Component: a
     workInProgress,
     Component
   )
-  reconcileChildren(current, workInProgress, newChildren)
+  reconcileChildFibers(current, workInProgress, newChildren)
   return workInProgress.child
 }
 
 const updateHostRoot = (current: SReactFiber|null, workInProgress: SReactFiber): void => {
   const newChildren = workInProgress.props.children
-  reconcileChildren(current, workInProgress, newChildren)
+  reconcileChildFibers(current, workInProgress, newChildren)
 }
 
 const updateHost = (current: SReactFiber | null, workInProgress: SReactFiber): void => {
@@ -63,7 +66,7 @@ const updateHost = (current: SReactFiber | null, workInProgress: SReactFiber): v
     workInProgress.stateNode = createDOM(workInProgress)
   }
   const newChildren = workInProgress.props.children
-  reconcileChildren(current, workInProgress, newChildren)
+  reconcileChildFibers(current, workInProgress, newChildren)
 }
 
 const updateHostText = (currentFiber: SReactFiber | null, workInProgress: SReactFiber): void => {
@@ -81,12 +84,12 @@ const mountFunctionComponent = (current: SReactFiber | null, workInProgress: SRe
     Component
   )
   workInProgress.tag = FunctionComponent
-  reconcileChildren(current, workInProgress, children)
+  mountChildFibers(current, workInProgress, children)
   return workInProgress.child
 }
 const mountHostRoot = (current: SReactFiber|null, workInProgress: SReactFiber): void => {
   const newChildren = workInProgress.props.children
-  reconcileChildren(current, workInProgress, newChildren)
+  mountChildFibers(current, workInProgress, newChildren)
 }
 
 const mountHost = (current: SReactFiber | null, workInProgress: SReactFiber): void => {
@@ -94,7 +97,7 @@ const mountHost = (current: SReactFiber | null, workInProgress: SReactFiber): vo
     workInProgress.stateNode = createDOM(workInProgress)
   }
   const newChildren = workInProgress.props.children
-  reconcileChildren(current, workInProgress, newChildren)
+  mountChildFibers(current, workInProgress, newChildren)
 }
 
 const mountHostText = (currentFiber: SReactFiber | null, workInProgress: SReactFiber): void => {
