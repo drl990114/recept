@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
-import { giveTag } from './utils'
+import { giveTag, isArr } from './utils'
 import { SReactFiber } from './types'
 import { DELETION, PLACEMENT, UPDATE } from './constants'
 import { deletions } from './scheduler'
 
 export function reconcileChildren (current: SReactFiber | null, workInProgress: SReactFiber, newChildren: any[]): void {
   console.log('应该构建此fiber的子fiber树', current, workInProgress, newChildren)
+  newChildren = isArr(newChildren) ? newChildren : [newChildren]
   let newChildIndex = 0
   let oldFiber = current?.child ?? workInProgress.alternate?.child
   let prevSibling: SReactFiber | null = null
