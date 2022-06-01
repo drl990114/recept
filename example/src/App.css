@@ -39,6 +39,6 @@
 
 button {
   font-size: calc(10px + 2vmin);
-  width: 5vmin;
+  width: 30px;
   margin: 0 8px;
 }
