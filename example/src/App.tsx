@@ -12,23 +12,24 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <p>Hello SReact!</p>
         <p>count is: {count}</p>
-        <p>
-          <button
-            type="button"
-            onClick={() => setCount((count: number) => count + 1)}
-          >
-            +
-          </button>
-          <button
-            type="button"
-            onClick={() => setCount((count: number) => count - 1)}
-          >
-            -
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
+        <h4>
+          {count <= 0 && (
+            <button
+              type="button"
+              onClick={() => setCount((count: number) => count + 1)}
+            >
+              +
+            </button>
+          )}
+          {count > 0 && (
+            <button
+              type="button"
+              onClick={() => setCount((count: number) => count - 1)}
+            >
+              -
+            </button>
+          )}
+        </h4>
       </header>
     </div>
   )

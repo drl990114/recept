@@ -8,14 +8,6 @@ export const h = (type: any, props: any = {}, ...children: any): SReactElement =
   return createElement(type, props, children)
 }
 
-const expand = (arr: any[], target: any[] = []): any[] => {
-  arr.forEach(v => {
-    isArr(v)
-      ? expand(v, target)
-      : target.push(typeof v === 'string' ? createText(v) : v)
-  })
-  return target
-}
 const createElement = (
   type: any,
   props: any,
@@ -24,10 +16,22 @@ const createElement = (
   type,
   props: {
     ...props,
-    children: children.map(child => {
-      return typeof child === 'object' ? child : createText(child)
-    })
+    children
   }
 })
 
-export const createText = (text: string): SReactElement => ({ type: ELEMENT_TEXT, props: { text, children: [] } })
+export const createText = (text: string | number): SReactElement => ({ type: ELEMENT_TEXT, props: { text, children: [] } })
+
+// tools
+const expand = (arr: any[], target: any[] = []): any[] => {
+  arr.forEach(val => {
+    isArr(val)
+      ? expand(val, target)
+      : notSpecial(val) && target.push(isStr(val) ? createText(val) : val)
+  })
+  return target
+}
+
+const notSpecial = (x: unknown): boolean => x != null && x !== true && x !== false
+const isStr = (s: any): s is number | string =>
+  typeof s === 'number' || typeof s === 'string'
