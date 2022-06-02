@@ -5,13 +5,6 @@ import { SReactElement, SReactFiber } from './types'
 import { DELETION, ELEMENT_TEXT, FunctionComponent, HostComponent, HostText, MOVE, PLACEMENT, UPDATE } from './constants'
 import { deletions } from './scheduler'
 
-// reconcile的场景
-// 第一种场景：key相同，类型相同，数量相同。那么复用老节点，只更新属性
-// <div key="title" id="title">title</div>
-// 更改后：
-// <div key="title" id="title2">title2</div>
-
-// shouldTrackSideEffects 是否要跟踪副作用
 function childReconciler (shouldTrackSideEffects: boolean) {
 //   // 如果不需要跟踪副作用，直接返回
   function deleteChild (child: SReactFiber) {
@@ -33,11 +26,13 @@ function childReconciler (shouldTrackSideEffects: boolean) {
           newFiber.props = newChild.props
           newFiber.effectTag = UPDATE
           newFiber.alternate = oldFiber
+          newFiber.key = newChild.key
         } else {
           newFiber = {
             tag: oldFiber.tag,
             type: oldFiber.type,
             props: newChild.props,
+            key: newChild.key,
             stateNode: oldFiber.stateNode,
             return: wip,
             effectTag: UPDATE,
@@ -47,12 +42,11 @@ function childReconciler (shouldTrackSideEffects: boolean) {
         }
         return newFiber
       }
-      const created = createFiberFromElement(newChild)
-      created.effectTag = PLACEMENT
-      created.return = wip
-      return created
     }
-    return null
+    const created = createFiberFromElement(newChild)
+    created.effectTag = PLACEMENT
+    created.return = wip
+    return created
   }
 
   function placeChild (newFiber: SReactFiber, lastPlaceIndex: number, newIdx: number) {
@@ -62,7 +56,7 @@ function childReconciler (shouldTrackSideEffects: boolean) {
     if (current) {
       const oldIndex = current.index!
       // 如果旧fiber对应的真实DOM挂载的索引比lastPlaceIndex小
-      if (oldIndex && oldIndex < lastPlaceIndex) {
+      if (oldIndex != null && oldIndex < lastPlaceIndex) {
         // 旧fiber对应的真实dom就需要移动了
         newFiber.effectTag = MOVE
         return lastPlaceIndex
@@ -91,30 +85,36 @@ function childReconciler (shouldTrackSideEffects: boolean) {
   function deleteRemainingChildren (wip: SReactFiber, oldFiber: SReactFiber | null | undefined) {
     if (oldFiber == null) return undefined
     let childToDelete: any = oldFiber
+    console.log('deleteRemainingChildren', oldFiber)
     while (childToDelete != null) {
       deleteChild(childToDelete)
       childToDelete = childToDelete.sibling
     }
   }
-  function reconcileChildrenArray (current: SReactFiber | null, wip: SReactFiber, newChild: any[]) {
+  function reconcileChildrenArray (current: SReactFiber | null, wip: SReactFiber, newChilds: any[]) {
     let resultingFirstChild = null
     let previousNewFiber = null
     let oldChildFiber: any = current?.child
     let nextOldFiber = null
     let newIdx = 0
     let lastPlaceIndex = 0
-
-    for (; oldChildFiber && newIdx < newChild.length; newIdx++) {
+    // 从左到右，找到最后可以复用的index
+    for (; oldChildFiber && newIdx < newChilds.length; newIdx++) {
       nextOldFiber = oldChildFiber.sibling
       // 试图复用旧的fiber节点
-      const newFiber = updateSlot(wip, oldChildFiber, newChild[newIdx])
+      const newFiber = updateSlot(wip, oldChildFiber, newChilds[newIdx])
       // 如果key不一样，则跳出
-      if (!newFiber) break
+      if (!newFiber) {
+        if (oldChildFiber == null) {
+          oldChildFiber = nextOldFiber
+        }
+        break
+      }
       // 旧的fiber存在，但是新的fiber并没有复用旧的fiber
       if (oldChildFiber && !newFiber.alternate) {
         deleteChild(oldChildFiber)
       }
-      lastPlaceIndex = placeChild(newFiber, lastPlaceIndex, newIdx) // 其核心是给当前的newFiber添加一个副作用flags：新增
+      lastPlaceIndex = placeChild(newFiber, lastPlaceIndex, newIdx)
       if (!previousNewFiber) {
         resultingFirstChild = newFiber
       } else {
@@ -123,16 +123,19 @@ function childReconciler (shouldTrackSideEffects: boolean) {
       previousNewFiber = newFiber
       oldChildFiber = nextOldFiber
     }
-    if (lastPlaceIndex === newChild.length) {
+    console.log('lastPlaceIndex', lastPlaceIndex, newChilds)
+    if (lastPlaceIndex === newChilds.length) {
       deleteRemainingChildren(wip, oldChildFiber)
-      console.log('resultingFirstChild1', resultingFirstChild)
+      wip.child = resultingFirstChild!
+      console.log('resultingFirstChild1', wip)
+
       return resultingFirstChild
     }
 
     if (!oldChildFiber) {
       // 如果没有旧的fiber节点，则遍历newChild，为每个虚拟dom创建一个新的fiber
-      for (; newIdx < newChild.length; newIdx++) {
-        const newFiber = createChild(wip, newChild[newIdx])
+      for (; newIdx < newChilds.length; newIdx++) {
+        const newFiber = createChild(wip, newChilds[newIdx])
         lastPlaceIndex = placeChild(newFiber, lastPlaceIndex, newIdx)
         newFiber.effectTag = PLACEMENT
         if (!previousNewFiber) {
@@ -142,19 +145,20 @@ function childReconciler (shouldTrackSideEffects: boolean) {
         }
         previousNewFiber = newFiber
       }
-      console.log('resultingFirstChild2', resultingFirstChild)
       wip.child = resultingFirstChild!
+      console.log('resultingFirstChild2', wip)
+
       return resultingFirstChild
     }
 
     // 将剩下的旧的fiber放入map中
     const existingChildren = mapRemainingChildren(wip, oldChildFiber)
-    for (; newIdx < newChild.length; newIdx++) {
+    for (; newIdx < newChilds.length; newIdx++) {
       const newFiber = updateFromMap(
         existingChildren,
         wip,
         newIdx,
-        newChild[newIdx]
+        newChilds[newIdx]
       )
       if (newFiber) {
         // 如果alternate存在，则表示是复用的节点
@@ -171,6 +175,8 @@ function childReconciler (shouldTrackSideEffects: boolean) {
       }
     }
     existingChildren.forEach((child) => deleteChild(child))
+    console.log('existing', wip)
+    wip.child = resultingFirstChild!
     return resultingFirstChild
   }
   function mapRemainingChildren (returnFiber: SReactFiber, currentFirstChild: SReactFiber) {
@@ -282,6 +288,7 @@ const createFiberFromElement = (vdom: SReactElement): SReactFiber => {
   return {
     type,
     tag,
-    props
+    props,
+    key: props?.key
   }
 }

@@ -13,7 +13,8 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
     tag: currentFiber.effectTag,
     props: currentFiber.props,
     type: currentFiber.type,
-    stateNode: currentFiber.stateNode
+    stateNode: currentFiber.stateNode,
+    key: currentFiber.key
   })
 
   let returnFiber = currentFiber.return
@@ -26,7 +27,13 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
   const domReturn = returnFiber.stateNode as Node
   if (currentFiber.effectTag === PLACEMENT) { // 新增加节点
     const nextFiber = currentFiber
-    ;(nextFiber.stateNode != null) && domReturn.appendChild(nextFiber.stateNode)
+    if (nextFiber.stateNode != null) {
+      if (nextFiber.sibling?.stateNode != null) {
+        domReturn.insertBefore(nextFiber.stateNode, nextFiber.sibling.effectTag !== PLACEMENT ? nextFiber.sibling.stateNode : null)
+      } else {
+        domReturn.appendChild(nextFiber.stateNode)
+      }
+    }
   } else if (currentFiber.effectTag === DELETION) {
     return commitDeletion(currentFiber, domReturn)
   } else if (currentFiber.effectTag === UPDATE) {
