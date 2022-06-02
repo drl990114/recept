@@ -9,18 +9,23 @@ export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): v
 }
 export const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
   if (currentFiber == null) return
+  console.log('commit', {
+    tag: currentFiber.effectTag,
+    props: currentFiber.props,
+    type: currentFiber.type,
+    stateNode: currentFiber.stateNode
+  })
+
   let returnFiber = currentFiber.return
   while (returnFiber?.tag !== HostText &&
       returnFiber?.tag !== HostRoot &&
       returnFiber?.tag !== HostComponent) {
     returnFiber = returnFiber?.return
+    console.log('commit')
   }
   const domReturn = returnFiber.stateNode as Node
   if (currentFiber.effectTag === PLACEMENT) { // 新增加节点
-    let nextFiber = currentFiber
-    while (nextFiber.tag !== HostComponent && nextFiber.tag !== HostText) {
-      (currentFiber.child != null) && (nextFiber = currentFiber.child)
-    }
+    const nextFiber = currentFiber
     ;(nextFiber.stateNode != null) && domReturn.appendChild(nextFiber.stateNode)
   } else if (currentFiber.effectTag === DELETION) {
     return commitDeletion(currentFiber, domReturn)
