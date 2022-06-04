@@ -1,11 +1,11 @@
 import { scheduleUpdateOnFiber } from './scheduler'
-import { Ref, SReactFiber } from './types'
+import type { Ref, SReactFiber, hook, queue } from './types'
 let currentlyRenderingFiber: any = null
 let workInProgressHook: any = null
 let currentHook: any = null // old
 const ReactCurrentDispatcher: Ref = { current: null }
 
-export const renderWithHooks = (current: any, workInProgress: SReactFiber, Component: any): any => {
+export const renderWithHooks = (current: SReactFiber | null, workInProgress: SReactFiber, Component: any): any => {
   currentlyRenderingFiber = workInProgress
   currentlyRenderingFiber.memoizedState = null
   if (current != null) {
@@ -45,7 +45,7 @@ const mountState = (initialState: any): any => {
 const mountReducer = (reducer: any, initialArg: any): any => {
   const hook = mountWorkInProgressHook()
   hook.memoizedState = initialArg
-  const queue = (hook.queue = { pending: null })
+  const queue = hook.queue = { pending: null }
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
   return [hook.memoizedState, dispatch]
 }
@@ -53,27 +53,27 @@ const updateReducer = (reducer: any, initialArg: any): any => {
   const hook = updateWorkInProgressHook()
   const queue = hook.queue
   const current = currentHook
-  const pendingQueue = queue.pending
+  const pendingQueue = queue?.pending
 
-  if (pendingQueue !== null) {
+  if (pendingQueue != null) {
     const first = pendingQueue.next
     let newState = current.memoizedState
-    let update = first
+    let update: hook |null|undefined = first
     do {
-      const action = update.action
+      const action = update?.action
       newState = reducer(newState, action)
-      update = update.next
+      update = update?.next
     } while (update !== null && update !== first)
-    queue.pending = null
+    ;(queue != null) && (queue.pending = null)
     hook.memoizedState = newState
-    queue.lastRenderedState = newState
+    ;(queue != null) && (queue.lastRenderedState = newState)
   }
 
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
   return [hook.memoizedState, dispatch]
 }
 
-const dispatchAction = (currentlyRenderingFiber: SReactFiber, queue: any, action: any): any => {
+const dispatchAction = (currentlyRenderingFiber: SReactFiber, queue: queue, action: any): void => {
   const update: any = { action, next: null }
   const pending = queue.pending
   if (pending === null) {
@@ -95,7 +95,7 @@ const dispatchAction = (currentlyRenderingFiber: SReactFiber, queue: any, action
   scheduleUpdateOnFiber(currentlyRenderingFiber)
 }
 
-const mountWorkInProgressHook = (): any => {
+const mountWorkInProgressHook = (): hook => {
   const hook = {
     memoizedState: null,
     queue: null,
@@ -110,7 +110,7 @@ const mountWorkInProgressHook = (): any => {
   return workInProgressHook
 }
 
-const updateWorkInProgressHook = (): any => {
+const updateWorkInProgressHook = (): hook => {
   let nextCurrentHook
   if (currentHook === null) {
     const current = currentlyRenderingFiber.alternate

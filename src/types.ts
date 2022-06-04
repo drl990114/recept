@@ -5,6 +5,17 @@ export interface SReactElement<P = any, T = string | Function> {
   key?: number | string
 }
 
+export interface queue {
+  pending: null | hook
+  lastRenderedReducer?: any
+  lastRenderedState?: any
+}
+export interface hook {
+  action: any
+  memoizedState: any
+  queue: queue | null
+  next: hook | null
+}
 export interface Ref<T = any> {
   current: T
 }
