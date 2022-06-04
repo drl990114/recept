@@ -21,7 +21,7 @@ export const render = (vdom: any, node: Node): void => {
   scheduleRoot(rootFiber)
 }
 
-export const scheduleRoot = (rootFiber: SReactFiber): void => { // {tag:TAG_ROOT,stateNode:container,props: { children: [element] }}
+export const scheduleRoot = (rootFiber: SReactFiber): void => {
   if (currentRoot?.alternate != null) {
     // Performed at least one render
     workInProgressRoot = currentRoot.alternate

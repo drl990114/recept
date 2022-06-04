@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx",
     "target": "esnext",
     "module": "esnext",
     "lib": ["esnext","DOM"],
@@ -10,6 +9,11 @@
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "skipDefaultLibCheck": true
-  }
+    "skipDefaultLibCheck": true,
+    "jsx": "react",
+    "jsxFactory": "h",
+    "jsxFragmentFactory": "Fragment",
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["src"]
 }

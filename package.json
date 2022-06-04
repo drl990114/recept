@@ -1,17 +1,35 @@
 {
   "name": "sreact",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build": "rollup -f umd -n name -o dist/index.umd.js -- src/index.ts",
+    "build": "rollup -c",
     "test": "jest",
     "lint": "eslint ."
   },
+  "exports": {
+    ".": {
+      "import": "./dist/sreact.js",
+      "require": "./dist/sreact.umd.js"
+    },
+    "./jsx-runtime": {
+      "import": "./jsx-runtime.js",
+      "require": "./jsx-runtime.js"
+    }
+  },
+  "files": [
+    "src/**/*",
+    "dist/*.js",
+    "dist/*.map",
+    "jsx-runtime.js"
+  ],
   "author": "halodong",
   "license": "MIT",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@types/jest": "^27.5.1",
+    "@types/react": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "codecov": "^3.8.3",
@@ -21,7 +39,11 @@
     "eslint-plugin-standard": "^5.0.0",
     "jest": "^28.1.0",
     "jest-config": "^28.1.0",
+    "jest-environment-jsdom": "^28.1.0",
     "rollup": "^2.74.1",
+    "rollup-plugin-size": "^0.2.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.31.2",
     "standard": "^17.0.0",
     "ts-jest": "^28.0.3",
     "ts-standard": "^11.0.0",

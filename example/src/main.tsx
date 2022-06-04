@@ -3,10 +3,12 @@ import './index.css'
 
 function Counter (props: { count: any }) {
   const [count,setCount] = useState(props.count)
+  const [count2,setCount2] = useState(props.count)
 
   return <div>
     <h3>计数器:
       count {count >= 0 ? '>=':'<'} 0
+      <h4> count2 : {count2}</h4>
     </h3>
     <button key="btn1" onClick={()=>setCount(count+1)}>+</button>
     {count}

@@ -13,3 +13,4 @@ src/plugins/*
 *.html
 example
 LICENSE
+__test__
