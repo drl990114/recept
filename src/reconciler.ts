@@ -6,7 +6,6 @@ import { DELETION, ELEMENT_TEXT, FunctionComponent, HostComponent, HostText, MOV
 import { deletions } from './scheduler'
 
 function childReconciler (shouldTrackSideEffects: boolean) {
-//   // 如果不需要跟踪副作用，直接返回
   function deleteChild (child: SReactFiber) {
     if (!shouldTrackSideEffects) return
     child.effectTag = DELETION
@@ -61,7 +60,6 @@ function childReconciler (shouldTrackSideEffects: boolean) {
         newFiber.effectTag = MOVE
         return lastPlaceIndex
       } else {
-        // 否则，不需要移动，并且把旧fiber的原来的挂载索引返回成为新的lastPlaceIndex
         return oldIndex
       }
     } else {
@@ -78,7 +76,6 @@ function childReconciler (shouldTrackSideEffects: boolean) {
     if (newChild.key === key) {
       return updateElement(wip, oldFiber, newChild)
     } else {
-      // 如果key不一样，直接结束返回null
       return null
     }
   }
@@ -161,7 +158,7 @@ function childReconciler (shouldTrackSideEffects: boolean) {
         newChilds[newIdx]
       )
       if (newFiber) {
-        // 如果alternate存在，则表示是复用的节点
+        // 如果alternate存在，则是复用的节点
         if (newFiber.alternate) {
           existingChildren.delete(newFiber.key ?? newIdx)
         }
@@ -189,72 +186,6 @@ function childReconciler (shouldTrackSideEffects: boolean) {
     }
     return existingChildren
   }
-  // function reconcileChildren (current: SReactFiber | null, workInProgress: SReactFiber, newChildren: any[]): void {
-  //   console.log('应该构建此fiber的子fiber树', current, workInProgress, newChildren)
-  //   newChildren = isArr(newChildren) ? newChildren : [newChildren]
-  //   let newChildIndex = 0
-  //   let oldFiber = current?.child ?? workInProgress.alternate?.child
-  //   let prevSibling: SReactFiber | null = null
-
-  //   while (newChildIndex < newChildren.length || (oldFiber != null)) {
-  //     const newChild = newChildren[newChildIndex]
-  //     let newFiber: SReactFiber | null = null
-  //     const sameType = (oldFiber != null) && newChild && oldFiber.type === newChild.type
-  //     giveTag(newChild)
-  //     if (sameType) {
-  //       if (oldFiber?.alternate != null) {
-  //         newFiber = oldFiber.alternate
-  //         newFiber.props = newChild.props
-  //         newFiber.effectTag = UPDATE
-  //         newFiber.alternate = oldFiber
-  //       } else {
-  //         newFiber = {
-  //           tag: oldFiber!.tag,
-  //           type: oldFiber!.type,
-  //           props: newChild.props,
-  //           stateNode: oldFiber!.stateNode,
-  //           return: workInProgress,
-  //           effectTag: UPDATE,
-  //           alternate: oldFiber
-  //         }
-  //       }
-  //     } else {
-  //       console.log('newChild,', newChild)
-  //       if (newChild) {
-  //         newFiber = {
-  //           tag: newChild.tag, // worktag
-  //           type: newChild.type,
-  //           props: newChild.props,
-  //           effectTag: PLACEMENT,
-  //           stateNode: null,
-  //           return: workInProgress
-  //         }
-  //       }
-  //       if (oldFiber) {
-  //         oldFiber.effectTag = DELETION
-  //         deletions.push(oldFiber)
-  //       }
-  //     }
-
-  //     if (oldFiber != null) {
-  //       oldFiber = oldFiber.sibling
-  //     }
-
-  //     if (newFiber != null) {
-  //       if (newChildIndex === 0) {
-  //         workInProgress.child = newFiber
-  //       } else {
-  //         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  //         prevSibling!.sibling = newFiber
-  //       }
-  //       prevSibling = newFiber
-  //     }
-  //     newChildIndex++
-  //   }
-  //   console.log('构建此fiber的子fiber树完成', workInProgress)
-  // }
-
-  // currentFirstChild 旧的fiber节点 newChild新的虚拟DOM
   function reconcileChildFibers (current: SReactFiber | null, wip: SReactFiber, newChild: any) {
     const isObject = typeof newChild === 'object' && newChild
     if (isObject) {
