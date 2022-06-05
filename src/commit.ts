@@ -22,14 +22,22 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
       returnFiber?.tag !== HostRoot &&
       returnFiber?.tag !== HostComponent) {
     returnFiber = returnFiber?.return
-    console.log('commit')
   }
   const domReturn = returnFiber.stateNode as Node
-  if (currentFiber.effectTag === PLACEMENT) { // 新增加节点
+  if (currentFiber.effectTag === PLACEMENT) {
     const nextFiber = currentFiber
     if (nextFiber.stateNode != null) {
-      if (nextFiber.sibling?.stateNode != null) {
-        domReturn.insertBefore(nextFiber.stateNode, nextFiber.sibling.effectTag !== PLACEMENT ? nextFiber.sibling.stateNode : null)
+      let nextDOM = null
+      let sibling = nextFiber.sibling
+      while (sibling != null && nextDOM == null) {
+        if (sibling.stateNode != null && sibling.effectTag !== PLACEMENT) {
+          nextDOM = sibling.stateNode
+          break
+        }
+        sibling = sibling.sibling
+      }
+      if (nextDOM != null) {
+        domReturn.insertBefore(nextFiber.stateNode, nextDOM)
       } else {
         domReturn.appendChild(nextFiber.stateNode)
       }
