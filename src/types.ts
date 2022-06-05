@@ -33,3 +33,8 @@ export interface SReactFiber<P = any> {
   stateNode?: Node | null
   memoizedState?: any // hook head node
 }
+export type ITaskCallback = ((time: boolean) => boolean) | null
+export interface ITask {
+  callback?: ITaskCallback
+  fiber: SReactFiber
+}
