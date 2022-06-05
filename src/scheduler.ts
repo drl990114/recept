@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { SReactFiber } from './types'
+import { SReactFiber, ITask } from './types'
 import { beginWork } from './beginWork'
 import { HostRoot } from './constants'
 import { commitRoot } from './commit'
@@ -19,6 +19,7 @@ export const render = (vdom: any, node: Node): void => {
   }
   workInProgress = rootFiber
   scheduleRoot(rootFiber)
+  schedule(bridge)
 }
 
 export const scheduleRoot = (rootFiber: SReactFiber): void => {
@@ -51,6 +52,7 @@ export const scheduleUpdateOnFiber = (oldFiber: SReactFiber): any => {
   }
   nextUnitOfWork = newFiber
   workInProgress = newFiber
+  schedule(bridge)
 }
 
 const performUnitOfWork = (unitOfWorkFiber: any): any => {
@@ -65,28 +67,81 @@ const performUnitOfWork = (unitOfWorkFiber: any): any => {
     }
     unitOfWorkFiber = unitOfWorkFiber.return
   }
+  return null
 }
 
 // Loop processing fiber units of work
-const workLoop = (deadline: IdleDeadline): void => {
-  let shouldYield = false
-  while (nextUnitOfWork != null && !shouldYield) {
+const bridge = (): void => {
+  while (nextUnitOfWork != null && !shouldYield()) {
     nextUnitOfWork = performUnitOfWork(nextUnitOfWork)
-    shouldYield = deadline.timeRemaining() < 1
   }
+
+  if (nextUnitOfWork != null) return schedule(bridge)
+
   if (nextUnitOfWork == null && workInProgressRoot != null) {
     console.log('fiber构造结束', workInProgressRoot)
     commitRoot(workInProgressRoot, deletions)
     console.log('渲染阶段结束', workInProgressRoot)
-    currentRoot = workInProgressRoot// 把当前渲染成功的根fiber 赋给currentRoot
+    currentRoot = workInProgressRoot
     workInProgressRoot = null
     workInProgress = null
   }
   if (nextUnitOfWork == null && workInProgress != null) {
-    console.log('workinprogress', workInProgress)
     commitRoot(workInProgress, deletions)
     workInProgress = null
   }
-  requestIdleCallback(workLoop, { timeout: 500 })
 }
-requestIdleCallback(workLoop, { timeout: 500 })
+
+const queue: ITask[] = []
+const threshold: number = 5
+const transitions: any[] = []
+let deadline: number = 0
+
+const startTransition = (cb: any): void => {
+  transitions.push(cb) && translate()
+}
+
+const schedule = (callback: any): void => {
+  queue.push({ callback } as any)
+  startTransition(flush)
+}
+
+const task = (pending: boolean): Function => {
+  const cb = (): void => transitions.splice(0, 1).forEach(c => c())
+  if (!pending && typeof Promise !== 'undefined') {
+    return () => queueMicrotask(cb)
+  }
+  if (typeof MessageChannel !== 'undefined') {
+    const { port1, port2 } = new MessageChannel()
+    port1.onmessage = cb
+    return () => port2.postMessage(null)
+  }
+  return () => setTimeout(cb)
+}
+
+let translate = task(false)
+
+const flush = (): void => {
+  deadline = getTime() + threshold
+  let job = peek(queue)
+  while (job && !shouldYield()) {
+    const { callback } = job as any
+    job.callback = null
+    const next = callback()
+    if (next) {
+      job.callback = next
+    } else {
+      queue.shift()
+    }
+    job = peek(queue)
+  }
+  job && (translate = task(shouldYield())) && startTransition(flush)
+}
+
+const shouldYield = (): boolean => {
+  return getTime() >= deadline
+}
+
+const getTime = (): number => performance.now()
+
+const peek = (queue: ITask[]): ITask => queue[0]
