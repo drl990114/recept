@@ -31,7 +31,7 @@ export interface SReactFiber<P = any> {
   alternate?: SReactFiber<P> // old
   effectTag?: symbol | null
   stateNode?: Node | null
-  memoizedState?: any // hook head node
+  hook?: any // hook head node
 }
 export type ITaskCallback = ((time: boolean) => boolean) | null
 export interface ITask {

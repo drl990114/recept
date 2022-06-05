@@ -103,7 +103,7 @@ const mountWorkInProgressHook = (): hook => {
   }
 
   if (workInProgressHook === null) {
-    currentlyRenderingFiber.memoizedState = workInProgressHook = hook
+    currentlyRenderingFiber.hook = workInProgressHook = hook
   } else {
     workInProgressHook = workInProgressHook.next = hook
   }
@@ -114,7 +114,7 @@ const updateWorkInProgressHook = (): hook => {
   let nextCurrentHook
   if (currentHook === null) {
     const current = currentlyRenderingFiber.alternate
-    nextCurrentHook = current.memoizedState
+    nextCurrentHook = current.hook
   } else {
     nextCurrentHook = currentHook.next
   }
@@ -127,7 +127,7 @@ const updateWorkInProgressHook = (): hook => {
   }
 
   if (workInProgressHook === null) {
-    currentlyRenderingFiber.memoizedState = workInProgressHook = newHook
+    currentlyRenderingFiber.hook = workInProgressHook = newHook
   } else {
     workInProgressHook.next = newHook
     workInProgressHook = newHook
