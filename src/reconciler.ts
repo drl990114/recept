@@ -54,9 +54,8 @@ function childReconciler (shouldTrackSideEffects: boolean) {
     const current = newFiber.alternate
     if (current) {
       const oldIndex = current.index!
-      // 如果旧fiber对应的真实DOM挂载的索引比lastPlaceIndex小
       if (oldIndex != null && oldIndex < lastPlaceIndex) {
-        // 旧fiber对应的真实dom就需要移动了
+        // The real DOM corresponding to the old fiber needs to be moved
         newFiber.effectTag = PLACEMENT
         return lastPlaceIndex
       } else {
