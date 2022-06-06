@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/strict-boolean-expressions */
 import { SReactElement, SReactFiber } from './types'
-import { DELETION, ELEMENT_TEXT, FunctionComponent, HostComponent, HostText, MOVE, PLACEMENT, UPDATE } from './constants'
+import { DELETION, ELEMENT_TEXT, FunctionComponent, HostComponent, HostText, PLACEMENT, UPDATE } from './constants'
 import { deletions } from './scheduler'
 
 function childReconciler (shouldTrackSideEffects: boolean) {
@@ -57,7 +57,7 @@ function childReconciler (shouldTrackSideEffects: boolean) {
       // 如果旧fiber对应的真实DOM挂载的索引比lastPlaceIndex小
       if (oldIndex != null && oldIndex < lastPlaceIndex) {
         // 旧fiber对应的真实dom就需要移动了
-        newFiber.effectTag = MOVE
+        newFiber.effectTag = PLACEMENT
         return lastPlaceIndex
       } else {
         return oldIndex

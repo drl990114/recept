@@ -8,6 +8,5 @@ export const HostText /**               */ = 3
 export const PLACEMENT /**              */ = Symbol.for('PLACEMENT')
 export const UPDATE /**                 */ = Symbol.for('UPDATE')
 export const DELETION /**               */ = Symbol.for('DELETION')
-export const MOVE /**                   */ = Symbol.for('MOVE')
 
 export const ELEMENT_TEXT = '#text'
