@@ -1,4 +1,4 @@
-import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE } from './constants'
+import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE, MOUNTEFFECT, FunctionComponent } from './constants'
 import { updateDOM } from './dom'
 import { SReactFiber } from './types'
 
@@ -9,6 +9,7 @@ export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): v
 }
 export const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
   if (currentFiber == null) return
+  const fiberEffectTag = currentFiber.effectTag
   console.log('commit', {
     tag: currentFiber.effectTag,
     props: currentFiber.props,
@@ -16,7 +17,6 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
     stateNode: currentFiber.stateNode,
     key: currentFiber.key
   })
-
   let returnFiber = currentFiber.return
   while (returnFiber?.tag !== HostText &&
       returnFiber?.tag !== HostRoot &&
@@ -50,14 +50,17 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
         (currentFiber.stateNode != null) && (currentFiber.stateNode.textContent = currentFiber.props.text)
       }
     } else {
-      updateDOM(currentFiber.stateNode as any,
-        currentFiber.alternate?.props, currentFiber.props)
+      console.log('currentFiber', currentFiber)
+      if (currentFiber.tag !== FunctionComponent) {
+        updateDOM(currentFiber.stateNode as any,
+          currentFiber.alternate?.props, currentFiber.props)
+      }
     }
   }
-
   currentFiber.effectTag = null
   commitWork(currentFiber.child)
   commitWork(currentFiber.sibling)
+  commitHookEffectList(currentFiber, fiberEffectTag)
 }
 const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node): void => {
   if (currentFiber.tag === HostComponent || currentFiber.tag === HostText) {
@@ -67,4 +70,27 @@ const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node
       commitDeletion(currentFiber.child, domReturn)
     }
   }
+  commitHookEffectList(currentFiber, DELETION)
+}
+
+export const commitHookEffectList = (
+  currentFiber: SReactFiber,
+  fiberTag: any
+): void => {
+  const effectList = currentFiber.effect
+  ;(effectList != null) && console.log('commitHookEffectList', currentFiber)
+  effectList?.forEach((effect) => {
+    if (fiberTag === DELETION) {
+      // Unmount
+      const destroy = effect.destroy
+      effect.destroy = undefined
+      if (destroy !== undefined) {
+        destroy()
+      }
+    } else if (effect.tag === MOUNTEFFECT) {
+      // Mount
+      const create = effect.create
+      effect.destroy = create()
+    }
+  })
 }
