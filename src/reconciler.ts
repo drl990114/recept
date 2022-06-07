@@ -163,10 +163,6 @@ function childReconciler (shouldTrackSideEffects: boolean) {
     return existingChildren
   }
   function reconcileChildFibers (current: SReactFiber | null, wip: SReactFiber, newChild: any) {
-    const isObject = typeof newChild === 'object' && newChild
-    if (isObject) {
-      // TODO 单个节点对比
-    }
     if (Array.isArray(newChild)) {
       reconcileChildrenArray(current, wip, newChild)
     } else {
