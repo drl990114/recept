@@ -12,6 +12,6 @@ export const DELETION /**               */ = Symbol.for('DELETION')
 export const ELEMENT_TEXT = '#text'
 
 // hook effect flag
-export const MOUNTEFFECT /**              */ = Symbol.for('MOUNTEFFECT')
-export const UNMOUNTEFFECT /**            */ = Symbol.for('UNMOUNTEFFECT')
+export const DEPENDEXEC /**              */ = Symbol.for('DEPENDEXEC')
+export const ONCE /**            */ = Symbol.for('ONCE')
 export const NOHOOKEFFECT /**             */ = Symbol.for('NOHOOKEFFECT')
