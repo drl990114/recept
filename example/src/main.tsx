@@ -8,7 +8,7 @@ import {
   useCallback,
 } from '../../src'
 import './index.css'
-// import React, { useEffect, useState,useMemo,useRef } from 'react'
+// import React, { useEffect, useState,useMemo,useRef ,useCallback} from 'react'
 // import { render } from 'react-dom'
 
 function Counter(props: any) {
@@ -19,7 +19,7 @@ function Counter(props: any) {
     return () => {
       console.log('effect 卸载', div, document.getElementById('test'))
     }
-  }, [])
+  })
 
   const desc = useMemo(() => {
     console.log('useMemo')
@@ -33,7 +33,7 @@ function Counter(props: any) {
 
   const cb = useCallback(()=>{
     console.log('useCallback',count)
-  },[count])
+  },[props.open])
 
   return (
     <div ref={div} id="test">
@@ -57,7 +57,7 @@ function App() {
       <button onClick={() => setSwitch(!open)}>
         {open ? '当前：开' : '当前：关'}
       </button>
-      {open && <Counter count={1} isOpen={open} />}
+      <Counter count={1} isOpen={open} />
       <footer>sreact</footer>
     </div>
   )
