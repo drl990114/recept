@@ -1,17 +1,17 @@
-import { h, render, useState, useEffect, useMemo } from '../../src'
+import { h, render, useState, useEffect, useMemo, useRef } from '../../src'
 import './index.css'
-// import React, { useEffect, useState,useMemo } from 'react'
+// import React, { useEffect, useState,useMemo,useRef } from 'react'
 // import { render } from 'react-dom'
 
 function Counter(props: any) {
   const [count, setCount] = useState(props.count)
-
+  const div = useRef(null)
   useEffect(() => {
-    console.log('effect 挂载', document.getElementById('test'))
+    console.log('effect 挂载', div, document.getElementById('test'))
     return () => {
-      console.log('effect 卸载', document.getElementById('test'))
+      console.log('effect 卸载', div, document.getElementById('test'))
     }
-  },[])
+  }, [])
 
   const desc = useMemo(() => {
     console.log('useMemo')
@@ -21,9 +21,9 @@ function Counter(props: any) {
       return '小于等于0'
     }
   }, [count > 0])
-
+  console.log('ref', div)
   return (
-    <div id="test">
+    <div ref={div} id="test">
       <h3>计数器: count {desc}</h3>
       <button key="btn1" onClick={() => setCount(count + 1)}>
         +
@@ -43,7 +43,7 @@ function App() {
       <button onClick={() => setSwitch(!open)}>
         {open ? '当前：开' : '当前：关'}
       </button>
-      {open && <Counter count={1} isOpen={open}/>}
+      {open && <Counter count={1} isOpen={open} />}
       <footer>sreact</footer>
     </div>
   )

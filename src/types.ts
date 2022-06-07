@@ -3,6 +3,7 @@ export interface SReactElement<P = any, T = string | Function> {
   type: T
   props: P
   key?: number | string
+  ref?: any
 }
 
 export interface queue {
@@ -28,6 +29,7 @@ export interface Ref<T = any> {
 }
 export interface SReactFiber<P = any> {
   key?: number | string
+  ref?: any
   index?: number
   type?: string | Function
   tag: number

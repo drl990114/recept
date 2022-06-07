@@ -52,6 +52,10 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
       }
     }
   }
+
+  if (currentFiber.ref != null) {
+    typeof currentFiber.ref === 'function' ? currentFiber.ref(currentFiber.stateNode) : currentFiber.ref.current = currentFiber.stateNode
+  }
   currentFiber.effectTag = null
   commitWork(currentFiber.child)
   commitWork(currentFiber.sibling)
@@ -65,6 +69,9 @@ const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node
     }
   }
   commitHookEffectList(currentFiber, DELETION)
+  if (currentFiber.ref != null) {
+    typeof currentFiber.ref === 'function' ? currentFiber.ref(null) : currentFiber.ref.current = null
+  }
 }
 
 export const commitHookEffectList = (
