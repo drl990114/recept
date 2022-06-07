@@ -79,9 +79,7 @@ const bridge = (): void => {
   if (nextUnitOfWork != null) return schedule(bridge)
 
   if (nextUnitOfWork == null && workInProgressRoot != null) {
-    console.log('fiber构造结束', workInProgressRoot)
     commitRoot(workInProgressRoot, deletions)
-    console.log('渲染阶段结束', workInProgressRoot)
     currentRoot = workInProgressRoot
     workInProgressRoot = null
     workInProgress = null

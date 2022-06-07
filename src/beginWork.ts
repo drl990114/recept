@@ -8,7 +8,6 @@ import { SReactFiber } from './types'
 import { FunctionComponent, HostComponent, HostRoot, HostText } from './constants'
 
 export const beginWork = (current: SReactFiber, workInProgress: SReactFiber): any => {
-  console.log('beginwork', current, workInProgress)
   if (current != null) {
     switch (workInProgress.tag) {
       case HostRoot:

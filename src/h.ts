@@ -4,7 +4,6 @@ import { isArr } from './utils'
 
 export const h = (type: any, props: any = {}, ...children: any): SReactElement => {
   children = expand(children)
-  console.log('createElement', type, props, children)
   return createElement(type, props, children)
 }
 

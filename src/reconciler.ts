@@ -82,7 +82,6 @@ function childReconciler (shouldTrackSideEffects: boolean) {
   function deleteRemainingChildren (wip: SReactFiber, oldFiber: SReactFiber | null | undefined) {
     if (oldFiber == null) return undefined
     let childToDelete: any = oldFiber
-    console.log('deleteRemainingChildren', oldFiber)
     while (childToDelete != null) {
       deleteChild(childToDelete)
       childToDelete = childToDelete.sibling
