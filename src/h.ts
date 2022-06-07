@@ -14,6 +14,7 @@ const createElement = (
 ): SReactElement => ({
   type,
   key: props?.key,
+  ref: props?.ref,
   props: {
     ...props,
     children

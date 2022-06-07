@@ -196,6 +196,7 @@ const createFiberFromElement = (vdom: SReactElement): SReactFiber => {
     type,
     tag,
     props,
+    ref: props?.ref,
     key: props?.key
   }
 }
