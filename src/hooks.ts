@@ -45,6 +45,11 @@ export const useMemo = (cb: Function, deps?: any[]): any => {
 export const useRef = (val: any): any => {
   return ReactCurrentDispatcher.current.useMemo(() => ({ current: val }), [])
 }
+
+export const useCallback = (cb: Function, deps: any): any => {
+  return ReactCurrentDispatcher.current.useMemo(() => cb, deps)
+}
+
 const mountMemo = (cb: any, deps: any): void => {
   const hook = mountWorkInProgressHook()
   hook.memoizedState = {

@@ -1,4 +1,12 @@
-import { h, render, useState, useEffect, useMemo, useRef } from '../../src'
+import {
+  h,
+  render,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+  useCallback,
+} from '../../src'
 import './index.css'
 // import React, { useEffect, useState,useMemo,useRef } from 'react'
 // import { render } from 'react-dom'
@@ -22,8 +30,14 @@ function Counter(props: any) {
     }
   }, [count > 0])
   console.log('ref', div)
+
+  const cb = useCallback(()=>{
+    console.log('useCallback',count)
+  },[count])
+
   return (
     <div ref={div} id="test">
+      <button onClick={()=>cb()}>log count</button>
       <h3>计数器: count {desc}</h3>
       <button key="btn1" onClick={() => setCount(count + 1)}>
         +
