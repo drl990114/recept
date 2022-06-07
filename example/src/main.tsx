@@ -1,9 +1,9 @@
 import { h, render, useState, useEffect, useMemo } from '../../src'
 import './index.css'
-// import React, { useEffect, useState } from 'react'
+// import React, { useEffect, useState,useMemo } from 'react'
 // import { render } from 'react-dom'
 
-function Counter(props: { count: any }) {
+function Counter(props: any) {
   const [count, setCount] = useState(props.count)
 
   useEffect(() => {
@@ -11,7 +11,7 @@ function Counter(props: { count: any }) {
     return () => {
       console.log('effect 卸载', document.getElementById('test'))
     }
-  })
+  },[])
 
   const desc = useMemo(() => {
     console.log('useMemo')
@@ -43,7 +43,7 @@ function App() {
       <button onClick={() => setSwitch(!open)}>
         {open ? '当前：开' : '当前：关'}
       </button>
-      {open && <Counter count={1} />}
+      {open && <Counter count={1} isOpen={open}/>}
       <footer>sreact</footer>
     </div>
   )
