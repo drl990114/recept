@@ -80,7 +80,6 @@ export const commitHookEffectList = (
   fiberTag?: any
 ): void => {
   const effectList = currentFiber.effect
-  ;(effectList != null) && console.log('effectlist', effectList)
   effectList?.forEach((effect, index) => {
     if (fiberTag === DELETION || effect.tag === DEPENDEXEC) {
       // Unmount
