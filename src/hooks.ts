@@ -35,6 +35,31 @@ export const useEffect = (cb: Function, deps?: any[]): any => {
   return ReactCurrentDispatcher.current.useEffect(cb, deps)
 }
 
+export const useMemo = (cb: Function, deps?: any[]): any => {
+  return ReactCurrentDispatcher.current.useMemo(cb, deps)
+}
+
+const mountMemo = (cb: any, deps: any): void => {
+  const hook = mountWorkInProgressHook()
+  hook.memoizedState = {
+    res: cb(),
+    deps
+  }
+  return hook.memoizedState.res
+}
+
+const updateMemo = (cb: any, deps: any): void => {
+  const hook = updateWorkInProgressHook()
+
+  if (isChanged(hook.memoizedState.deps, deps)) {
+    hook.memoizedState.res = cb()
+    hook.memoizedState.deps = deps
+    return hook.memoizedState.res
+  }
+
+  return hook.memoizedState.res
+}
+
 const mountEffect = (cb: Function, deps?: any[]): void => {
   const nextDeps = deps === undefined ? null : deps
   pushEffect(MOUNTEFFECT, cb, undefined, nextDeps)
@@ -49,7 +74,7 @@ const updateEffect = (cb: Function, deps?: any[]): void => {
     destroy = prevEffect.destroy
     if (nextDeps !== null) {
       const prevDeps = prevEffect.deps
-      if (areHookInputsEqual(nextDeps, prevDeps)) {
+      if (isChanged(nextDeps, prevDeps)) {
         pushEffect(MOUNTEFFECT, cb, destroy, nextDeps)
       }
     }
@@ -75,6 +100,7 @@ const pushEffect = (tag: any, create: any, destroy: any, deps: any): IEffect => 
 const updateState = (initialState: any): any => {
   return updateReducer(basicStateReducer, initialState)
 }
+
 const mountState = (initialState: any): any => {
   const hook = mountWorkInProgressHook()
   hook.memoizedState = initialState
@@ -86,6 +112,7 @@ const mountState = (initialState: any): any => {
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
   return [hook.memoizedState, dispatch]
 }
+
 const mountReducer = (reducer: any, initialArg: any): any => {
   const hook = mountWorkInProgressHook()
   hook.memoizedState = initialArg
@@ -93,6 +120,7 @@ const mountReducer = (reducer: any, initialArg: any): any => {
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
   return [hook.memoizedState, dispatch]
 }
+
 const updateReducer = (reducer: any, initialArg: any): any => {
   const hook = updateWorkInProgressHook()
   const queue = hook.queue
@@ -160,7 +188,7 @@ const updateWorkInProgressHook = (): hook => {
     const current = currentlyRenderingFiber.alternate
     nextCurrentHook = current.hook
   } else {
-    nextCurrentHook = currentHook.next
+    nextCurrentHook = currentHook.next ?? currentHook
   }
   currentHook = nextCurrentHook
 
@@ -185,14 +213,17 @@ const basicStateReducer = (state: any, action: any): any => typeof action === 'f
 const HookDispatcherOnMount = {
   useState: mountState,
   useReducer: mountReducer,
-  useEffect: mountEffect
+  useEffect: mountEffect,
+  useMemo: mountMemo
 }
 const HookDispatcherOnUpdate = {
   useState: updateState,
   useReducer: updateReducer,
-  useEffect: updateEffect
+  useEffect: updateEffect,
+  useMemo: updateMemo
 }
 
-const areHookInputsEqual = (newDeps: any[], oldDeps: any[]): boolean => {
-  return newDeps.length !== oldDeps.length || oldDeps.some((arg: any, index: number) => !Object.is(arg, newDeps[index]))
+const isChanged = (a: any[], b: any[]): boolean => {
+  if (a == null || b == null) return true
+  return a.length !== b.length || b.some((arg: any, index: number) => !Object.is(arg, a[index]))
 }

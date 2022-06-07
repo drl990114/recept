@@ -1,4 +1,4 @@
-import { h, render, useState, useEffect } from '../../src'
+import { h, render, useState, useEffect, useMemo } from '../../src'
 import './index.css'
 // import React, { useEffect, useState } from 'react'
 // import { render } from 'react-dom'
@@ -12,14 +12,23 @@ function Counter(props: { count: any }) {
       console.log('effect 卸载', document.getElementById('test'))
     }
   })
+
+  const desc = useMemo(() => {
+    console.log('useMemo')
+    if (count > 0) {
+      return '大于0'
+    } else {
+      return '小于等于0'
+    }
+  }, [count > 0])
+
   return (
     <div id="test">
-      <h3>计数器: count {count >= 0 ? '>=' : '<'} 0</h3>
+      <h3>计数器: count {desc}</h3>
       <button key="btn1" onClick={() => setCount(count + 1)}>
         +
       </button>
       {count}
-      {count > 0 && '大于0'}
       <button key="btn2" onClick={() => setCount(count - 1)}>
         -
       </button>
@@ -39,4 +48,5 @@ function App() {
     </div>
   )
 }
+
 render(<App key="root" />, document.getElementById('root')!)
