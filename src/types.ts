@@ -10,6 +10,13 @@ export interface queue {
   lastRenderedReducer?: any
   lastRenderedState?: any
 }
+
+export interface IEffect {
+  tag: any
+  create: any
+  destroy: any
+  deps: null | any[]
+}
 export interface hook {
   action: any
   memoizedState: any
@@ -32,6 +39,7 @@ export interface SReactFiber<P = any> {
   effectTag?: symbol | null
   stateNode?: Node | null
   hook?: any // hook head node
+  effect?: IEffect[] | null
 }
 export type ITaskCallback = ((time: boolean) => boolean) | null
 export interface ITask {
