@@ -5,7 +5,8 @@ import { SReactFiber } from './types'
 
 export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): void => {
   deletions.forEach(commitWork)
-  commitWork(workInProgressRoot)
+  schedule(() => commitHookEffectList(workInProgressRoot))
+  commitWork(workInProgressRoot.child)
   deletions.length = 0
 }
 export const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
@@ -76,7 +77,7 @@ const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node
 
 export const commitHookEffectList = (
   currentFiber: SReactFiber,
-  fiberTag: any
+  fiberTag?: any
 ): void => {
   const effectList = currentFiber.effect
   ;(effectList != null) && console.log('effectlist', effectList)
