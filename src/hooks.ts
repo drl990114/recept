@@ -1,5 +1,6 @@
+import { MOUNTEFFECT } from './constants'
 import { scheduleUpdateOnFiber } from './scheduler'
-import type { Ref, SReactFiber, hook, queue } from './types'
+import type { Ref, SReactFiber, hook, queue, IEffect } from './types'
 let currentlyRenderingFiber: any = null
 let workInProgressHook: any = null
 let currentHook: any = null // old
@@ -7,7 +8,9 @@ const ReactCurrentDispatcher: Ref = { current: null }
 
 export const renderWithHooks = (current: SReactFiber | null, workInProgress: SReactFiber, Component: any): any => {
   currentlyRenderingFiber = workInProgress
-  currentlyRenderingFiber.memoizedState = null
+  currentlyRenderingFiber.hook = null
+  workInProgressHook = null
+  currentHook = null
   if (current != null) {
     ReactCurrentDispatcher.current = HookDispatcherOnUpdate
   } else {
@@ -26,6 +29,47 @@ export const useState = (initialState: any): any => {
 
 export const useReducer = (reducer: any, initialArg: any): any => {
   return ReactCurrentDispatcher.current.useReducer(reducer, initialArg)
+}
+
+export const useEffect = (cb: Function, deps?: any[]): any => {
+  return ReactCurrentDispatcher.current.useEffect(cb, deps)
+}
+
+const mountEffect = (cb: Function, deps?: any[]): void => {
+  const nextDeps = deps === undefined ? null : deps
+  pushEffect(MOUNTEFFECT, cb, undefined, nextDeps)
+}
+
+const updateEffect = (cb: Function, deps?: any[]): void => {
+  const nextDeps = deps === undefined ? null : deps
+  let destroy
+
+  if (currentHook !== null) {
+    const prevEffect = currentHook.memoizedState
+    destroy = prevEffect.destroy
+    if (nextDeps !== null) {
+      const prevDeps = prevEffect.deps
+      if (areHookInputsEqual(nextDeps, prevDeps)) {
+        pushEffect(MOUNTEFFECT, cb, destroy, nextDeps)
+      }
+    }
+  }
+}
+
+const pushEffect = (tag: any, create: any, destroy: any, deps: any): IEffect => {
+  const effect: IEffect = {
+    tag,
+    create,
+    destroy,
+    deps
+  }
+  if (currentlyRenderingFiber.effect == null) {
+    currentlyRenderingFiber.effect = [effect]
+  } else {
+    currentlyRenderingFiber.effect.push(effect)
+  }
+
+  return effect
 }
 
 const updateState = (initialState: any): any => {
@@ -140,9 +184,15 @@ const basicStateReducer = (state: any, action: any): any => typeof action === 'f
 
 const HookDispatcherOnMount = {
   useState: mountState,
-  useReducer: mountReducer
+  useReducer: mountReducer,
+  useEffect: mountEffect
 }
 const HookDispatcherOnUpdate = {
   useState: updateState,
-  useReducer: updateReducer
+  useReducer: updateReducer,
+  useEffect: updateEffect
+}
+
+const areHookInputsEqual = (newDeps: any[], oldDeps: any[]): boolean => {
+  return newDeps.length !== oldDeps.length || oldDeps.some((arg: any, index: number) => !Object.is(arg, newDeps[index]))
 }
