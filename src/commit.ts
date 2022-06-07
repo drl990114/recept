@@ -1,24 +1,25 @@
-import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE, MOUNTEFFECT, FunctionComponent } from './constants'
+import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE, DEPENDEXEC, FunctionComponent, ONCE, NOHOOKEFFECT } from './constants'
 import { updateDOM } from './dom'
 import { schedule } from './scheduler'
 import { SReactFiber } from './types'
 
 export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): void => {
   deletions.forEach(commitWork)
-  commitWork(workInProgressRoot.child)
+  commitWork(workInProgressRoot)
   deletions.length = 0
 }
 export const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
   if (currentFiber == null) return
-  schedule(() => commitHookEffectList(currentFiber, currentFiber.effectTag))
+  const fiberTag = currentFiber.effectTag
+  schedule(() => commitHookEffectList(currentFiber, fiberTag))
 
   let returnFiber = currentFiber.return
-  while (returnFiber?.tag !== HostText &&
+  while (returnFiber != null && returnFiber?.tag !== HostText &&
       returnFiber?.tag !== HostRoot &&
       returnFiber?.tag !== HostComponent) {
     returnFiber = returnFiber?.return
   }
-  const domReturn = returnFiber.stateNode as Node
+  const domReturn = returnFiber?.stateNode as Node
   if (currentFiber.effectTag === PLACEMENT) {
     const nextFiber = currentFiber
     if (nextFiber.stateNode != null) {
@@ -71,15 +72,23 @@ export const commitHookEffectList = (
   fiberTag: any
 ): void => {
   const effectList = currentFiber.effect
-  effectList?.forEach((effect) => {
-    if (fiberTag === DELETION) {
+  ;(effectList != null) && console.log('effectlist', effectList)
+  effectList?.forEach((effect, index) => {
+    if (fiberTag === DELETION || effect.tag === DEPENDEXEC) {
       // Unmount
       const destroy = effect.destroy
       effect.destroy = undefined
       if (destroy !== undefined) {
         destroy()
       }
-    } else if (effect.tag === MOUNTEFFECT) {
+    }
+    if (effect.tag === ONCE) {
+      // Mount
+      const create = effect.create
+      effect.destroy = create()
+      effect.tag = NOHOOKEFFECT
+    }
+    if (effect.tag === DEPENDEXEC) {
       // Mount
       const create = effect.create
       effect.destroy = create()

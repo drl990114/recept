@@ -1,9 +1,11 @@
-import { MOUNTEFFECT } from './constants'
+import { DEPENDEXEC, NOHOOKEFFECT, ONCE } from './constants'
 import { scheduleUpdateOnFiber } from './scheduler'
 import type { Ref, SReactFiber, hook, queue, IEffect } from './types'
+import { isArr } from './utils'
 let currentlyRenderingFiber: any = null
 let workInProgressHook: any = null
 let currentHook: any = null // old
+let effectListIndex = 0
 const ReactCurrentDispatcher: Ref = { current: null }
 
 export const renderWithHooks = (current: SReactFiber | null, workInProgress: SReactFiber, Component: any): any => {
@@ -11,6 +13,7 @@ export const renderWithHooks = (current: SReactFiber | null, workInProgress: SRe
   currentlyRenderingFiber.hook = null
   workInProgressHook = null
   currentHook = null
+  effectListIndex = 0
   if (current != null) {
     ReactCurrentDispatcher.current = HookDispatcherOnUpdate
   } else {
@@ -62,7 +65,12 @@ const updateMemo = (cb: any, deps: any): void => {
 
 const mountEffect = (cb: Function, deps?: any[]): void => {
   const nextDeps = deps === undefined ? null : deps
-  pushEffect(MOUNTEFFECT, cb, undefined, nextDeps)
+  if (isOnceEffect(nextDeps)) {
+    pushEffect(ONCE, cb, undefined, nextDeps)
+  } else {
+    pushEffect(DEPENDEXEC, cb, undefined, nextDeps)
+  }
+  effectListIndex++
 }
 
 const updateEffect = (cb: Function, deps?: any[]): void => {
@@ -70,15 +78,18 @@ const updateEffect = (cb: Function, deps?: any[]): void => {
   let destroy
 
   if (currentHook !== null) {
-    const prevEffect = currentHook.memoizedState
+    const prevEffect = currentlyRenderingFiber.effect[effectListIndex]
     destroy = prevEffect.destroy
     if (nextDeps !== null) {
       const prevDeps = prevEffect.deps
       if (isChanged(nextDeps, prevDeps)) {
-        pushEffect(MOUNTEFFECT, cb, destroy, nextDeps)
+        updateCurrentEffect(DEPENDEXEC, cb, destroy, nextDeps)
+      } else {
+        updateCurrentEffect(NOHOOKEFFECT, cb, destroy, nextDeps)
       }
     }
   }
+  effectListIndex++
 }
 
 const pushEffect = (tag: any, create: any, destroy: any, deps: any): IEffect => {
@@ -91,12 +102,20 @@ const pushEffect = (tag: any, create: any, destroy: any, deps: any): IEffect => 
   if (currentlyRenderingFiber.effect == null) {
     currentlyRenderingFiber.effect = [effect]
   } else {
-    currentlyRenderingFiber.effect.push(effect)
+    currentlyRenderingFiber.effect[effectListIndex] = effect
   }
 
   return effect
 }
 
+const updateCurrentEffect = (tag: any, create: any, destroy: any, deps: any): void => {
+  currentlyRenderingFiber.effect[effectListIndex] = {
+    tag,
+    create,
+    destroy,
+    deps
+  }
+}
 const updateState = (initialState: any): any => {
   return updateReducer(basicStateReducer, initialState)
 }
@@ -226,4 +245,8 @@ const HookDispatcherOnUpdate = {
 const isChanged = (a: any[], b: any[]): boolean => {
   if (a == null || b == null) return true
   return a.length !== b.length || b.some((arg: any, index: number) => !Object.is(arg, a[index]))
+}
+
+const isOnceEffect = (deps: any): boolean => {
+  return isArr(deps) && deps.length === 0
 }
