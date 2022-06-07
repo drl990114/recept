@@ -101,7 +101,7 @@ const startTransition = (cb: any): void => {
   transitions.push(cb) && translate()
 }
 
-const schedule = (callback: any): void => {
+export const schedule = (callback: any): void => {
   queue.push({ callback } as any)
   startTransition(flush)
 }
