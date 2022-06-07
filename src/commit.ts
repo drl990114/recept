@@ -1,5 +1,6 @@
 import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE, MOUNTEFFECT, FunctionComponent } from './constants'
 import { updateDOM } from './dom'
+import { schedule } from './scheduler'
 import { SReactFiber } from './types'
 
 export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): void => {
@@ -9,14 +10,8 @@ export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): v
 }
 export const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
   if (currentFiber == null) return
-  const fiberEffectTag = currentFiber.effectTag
-  console.log('commit', {
-    tag: currentFiber.effectTag,
-    props: currentFiber.props,
-    type: currentFiber.type,
-    stateNode: currentFiber.stateNode,
-    key: currentFiber.key
-  })
+  schedule(() => commitHookEffectList(currentFiber, currentFiber.effectTag))
+
   let returnFiber = currentFiber.return
   while (returnFiber?.tag !== HostText &&
       returnFiber?.tag !== HostRoot &&
@@ -50,7 +45,6 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
         (currentFiber.stateNode != null) && (currentFiber.stateNode.textContent = currentFiber.props.text)
       }
     } else {
-      console.log('currentFiber', currentFiber)
       if (currentFiber.tag !== FunctionComponent) {
         updateDOM(currentFiber.stateNode as any,
           currentFiber.alternate?.props, currentFiber.props)
@@ -60,7 +54,6 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
   currentFiber.effectTag = null
   commitWork(currentFiber.child)
   commitWork(currentFiber.sibling)
-  commitHookEffectList(currentFiber, fiberEffectTag)
 }
 const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node): void => {
   if (currentFiber.tag === HostComponent || currentFiber.tag === HostText) {
