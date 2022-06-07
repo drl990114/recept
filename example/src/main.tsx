@@ -1,4 +1,4 @@
-import { h, render, useState } from '../../src'
+import { h, render, useState, useEffect } from '../../src'
 import './index.css'
 // import React, { useEffect, useState } from 'react'
 // import { render } from 'react-dom'
@@ -6,7 +6,12 @@ import './index.css'
 function Counter(props: { count: any }) {
   const [count, setCount] = useState(props.count)
 
-
+  useEffect(() => {
+    console.log('effect 挂载', document.getElementById('test'))
+    return () => {
+      console.log('effect 卸载', document.getElementById('test'))
+    }
+  })
   return (
     <div id="test">
       <h3>计数器: count {count >= 0 ? '>=' : '<'} 0</h3>
