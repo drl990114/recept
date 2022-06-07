@@ -20,25 +20,13 @@ function childReconciler (shouldTrackSideEffects: boolean) {
     if (oldFiber) {
       if (oldFiber.type === newChild.type) {
         let newFiber: SReactFiber|null = null
-        if (oldFiber?.alternate != null) {
-          newFiber = oldFiber.alternate
-          newFiber.props = newChild.props
-          newFiber.effectTag = UPDATE
-          newFiber.alternate = oldFiber
-          newFiber.stateNode = oldFiber.stateNode
-          newFiber.key = newChild.key
-        } else {
-          newFiber = {
-            tag: oldFiber.tag,
-            type: oldFiber.type,
-            props: newChild.props,
-            key: newChild.key,
-            stateNode: oldFiber.stateNode,
-            return: wip,
-            effectTag: UPDATE,
-            alternate: oldFiber
-          }
-          newFiber.return = wip
+        newFiber = {
+          ...oldFiber,
+          props: newChild.props,
+          key: newChild.key,
+          return: wip,
+          effectTag: UPDATE,
+          alternate: oldFiber
         }
         return newFiber
       }
