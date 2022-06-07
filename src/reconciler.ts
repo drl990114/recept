@@ -25,6 +25,7 @@ function childReconciler (shouldTrackSideEffects: boolean) {
           newFiber.props = newChild.props
           newFiber.effectTag = UPDATE
           newFiber.alternate = oldFiber
+          newFiber.stateNode = oldFiber.stateNode
           newFiber.key = newChild.key
         } else {
           newFiber = {
@@ -94,19 +95,15 @@ function childReconciler (shouldTrackSideEffects: boolean) {
     let nextOldFiber = null
     let newIdx = 0
     let lastPlaceIndex = 0
-    // 从左到右，找到最后可以复用的index
     for (; oldChildFiber && newIdx < newChilds.length; newIdx++) {
       nextOldFiber = oldChildFiber.sibling
-      // 试图复用旧的fiber节点
       const newFiber = updateSlot(wip, oldChildFiber, newChilds[newIdx])
-      // 如果key不一样，则跳出
       if (!newFiber) {
         if (oldChildFiber == null) {
           oldChildFiber = nextOldFiber
         }
         break
       }
-      // 旧的fiber存在，但是新的fiber并没有复用旧的fiber
       if (oldChildFiber && !newFiber.alternate) {
         deleteChild(oldChildFiber)
       }
@@ -119,17 +116,14 @@ function childReconciler (shouldTrackSideEffects: boolean) {
       previousNewFiber = newFiber
       oldChildFiber = nextOldFiber
     }
-    console.log('lastPlaceIndex', lastPlaceIndex, newChilds)
+
     if (lastPlaceIndex === newChilds.length) {
       deleteRemainingChildren(wip, oldChildFiber)
       wip.child = resultingFirstChild!
-      console.log('resultingFirstChild1', wip)
-
       return resultingFirstChild
     }
 
     if (!oldChildFiber) {
-      // 如果没有旧的fiber节点，则遍历newChild，为每个虚拟dom创建一个新的fiber
       for (; newIdx < newChilds.length; newIdx++) {
         const newFiber = createChild(wip, newChilds[newIdx])
         lastPlaceIndex = placeChild(newFiber, lastPlaceIndex, newIdx)
@@ -142,12 +136,10 @@ function childReconciler (shouldTrackSideEffects: boolean) {
         previousNewFiber = newFiber
       }
       wip.child = resultingFirstChild!
-      console.log('resultingFirstChild2', wip)
 
       return resultingFirstChild
     }
 
-    // 将剩下的旧的fiber放入map中
     const existingChildren = mapRemainingChildren(wip, oldChildFiber)
     for (; newIdx < newChilds.length; newIdx++) {
       const newFiber = updateFromMap(
@@ -157,7 +149,6 @@ function childReconciler (shouldTrackSideEffects: boolean) {
         newChilds[newIdx]
       )
       if (newFiber) {
-        // 如果alternate存在，则是复用的节点
         if (newFiber.alternate) {
           existingChildren.delete(newFiber.key ?? newIdx)
         }
@@ -171,7 +162,6 @@ function childReconciler (shouldTrackSideEffects: boolean) {
       }
     }
     existingChildren.forEach((child) => deleteChild(child))
-    console.log('existing', wip)
     wip.child = resultingFirstChild!
     return resultingFirstChild
   }
