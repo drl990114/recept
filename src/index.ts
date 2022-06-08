@@ -6,5 +6,6 @@ export {
   useEffect,
   useMemo,
   useRef,
-  useCallback
+  useCallback,
+  useLayoutEffect
 } from './hooks'

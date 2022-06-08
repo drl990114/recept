@@ -15,3 +15,7 @@ export const DELETION /**                 */ = Symbol.for('DELETION')
 export const DEPENDEXEC /**               */ = Symbol.for('DEPENDEXEC')
 export const ONCE /**                     */ = Symbol.for('ONCE')
 export const NOHOOKEFFECT /**             */ = Symbol.for('NOHOOKEFFECT')
+
+export const DEPENDEXECLAYOUT /**               */ = Symbol.for('DEPENDEXECLAYOUT')
+export const ONCELAYOUT /**                     */ = Symbol.for('ONCELAYOUT')
+export const NOHOOKEFFECTLAYOUT /**             */ = Symbol.for('NOHOOKEFFECTLAYOUT')

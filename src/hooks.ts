@@ -1,4 +1,4 @@
-import { DEPENDEXEC, NOHOOKEFFECT, ONCE } from './constants'
+import { DEPENDEXEC, DEPENDEXECLAYOUT, NOHOOKEFFECT, ONCE, ONCELAYOUT } from './constants'
 import { scheduleUpdateOnFiber } from './scheduler'
 import type { Ref, SReactFiber, hook, queue, IEffect } from './types'
 import { isArr } from './utils'
@@ -35,6 +35,10 @@ export const useReducer = (reducer: any, initialArg: any): any => {
 
 export const useEffect = (cb: Function, deps?: any[]): any => {
   return ReactCurrentDispatcher.current.useEffect(cb, deps)
+}
+
+export const useLayoutEffect = (cb: Function, deps?: any[]): any => {
+  return ReactCurrentDispatcher.current.useLayoutEffect(cb, deps)
 }
 
 export const useMemo = (cb: Function, deps?: any[]): any => {
@@ -99,6 +103,33 @@ const updateEffect = (cb: Function, deps?: any[]): void => {
   effectListIndex++
 }
 
+const mountLayoutEffect = (cb: Function, deps?: any[]): void => {
+  const nextDeps = deps === undefined ? null : deps
+  if (isOnceEffect(nextDeps)) {
+    pushEffect(ONCELAYOUT, cb, undefined, nextDeps)
+  } else {
+    pushEffect(DEPENDEXECLAYOUT, cb, undefined, nextDeps)
+  }
+  effectListIndex++
+}
+const updateLayoutEffect = (cb: Function, deps?: any[]): void => {
+  const nextDeps = deps === undefined ? null : deps
+  let destroy
+
+  if (currentHook !== null) {
+    const prevEffect = currentlyRenderingFiber.effect[effectListIndex]
+    destroy = prevEffect.destroy
+    if (nextDeps !== null) {
+      const prevDeps = prevEffect.deps
+      if (isChanged(nextDeps, prevDeps)) {
+        updateCurrentEffect(DEPENDEXECLAYOUT, cb, destroy, nextDeps)
+      } else {
+        updateCurrentEffect(NOHOOKEFFECT, cb, destroy, nextDeps)
+      }
+    }
+  }
+  effectListIndex++
+}
 const pushEffect = (tag: any, create: any, destroy: any, deps: any): IEffect => {
   const effect: IEffect = {
     tag,
@@ -244,13 +275,15 @@ const HookDispatcherOnMount = {
   useState: mountState,
   useReducer: mountReducer,
   useEffect: mountEffect,
-  useMemo: mountMemo
+  useMemo: mountMemo,
+  useLayoutEffect: mountLayoutEffect
 }
 const HookDispatcherOnUpdate = {
   useState: updateState,
   useReducer: updateReducer,
   useEffect: updateEffect,
-  useMemo: updateMemo
+  useMemo: updateMemo,
+  useLayoutEffect: updateLayoutEffect
 }
 
 const isChanged = (a: any[], b: any[]): boolean => {
