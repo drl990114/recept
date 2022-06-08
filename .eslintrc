@@ -11,6 +11,7 @@
 
   "rules": {
     "quotes": ["error", "single"],
-    "no-debugger": "off"
+    "no-debugger": "off",
+    "@typescript-eslint/no-non-null-assertion": "warn"
   }
 }
