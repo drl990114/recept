@@ -10,10 +10,7 @@ const ReactCurrentDispatcher: Ref = { current: null }
 
 export const renderWithHooks = (current: SReactFiber | null, workInProgress: SReactFiber, Component: any): any => {
   currentlyRenderingFiber = workInProgress
-  currentlyRenderingFiber.hook = null
-  workInProgressHook = null
-  currentHook = null
-  effectListIndex = 0
+
   if (current != null) {
     ReactCurrentDispatcher.current = HookDispatcherOnUpdate
   } else {
@@ -22,7 +19,9 @@ export const renderWithHooks = (current: SReactFiber | null, workInProgress: SRe
 
   const children = Component(currentlyRenderingFiber.props)
   currentlyRenderingFiber = null
-
+  workInProgressHook = null
+  currentHook = null
+  effectListIndex = 0
   return children
 }
 
@@ -137,15 +136,19 @@ const mountState = (initialState: any): any => {
     lastRenderedState: initialState
   })
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
-  return [hook.memoizedState, dispatch]
+  return [queue.lastRenderedState, dispatch]
 }
 
 const mountReducer = (reducer: any, initialArg: any): any => {
   const hook = mountWorkInProgressHook()
   hook.memoizedState = initialArg
-  const queue = hook.queue = { pending: null }
+  const queue = hook.queue = {
+    pending: null,
+    lastRenderedReducer: reducer,
+    lastRenderedState: initialArg
+  }
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
-  return [hook.memoizedState, dispatch]
+  return [queue.lastRenderedState, dispatch]
 }
 
 const updateReducer = (reducer: any, initialArg: any): any => {
@@ -169,7 +172,7 @@ const updateReducer = (reducer: any, initialArg: any): any => {
   }
 
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
-  return [hook.memoizedState, dispatch]
+  return [queue?.lastRenderedState, dispatch]
 }
 
 const dispatchAction = (currentlyRenderingFiber: SReactFiber, queue: queue, action: any): void => {
