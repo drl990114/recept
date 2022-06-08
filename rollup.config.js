@@ -6,8 +6,8 @@ import resolve from '@rollup/plugin-node-resolve'
 export default {
   input: './src/index.ts',
   output: [
-    { file: 'dist/sreact.umd.js', format: 'umd', name: 'sreact', sourcemap: true },
-    { file: 'dist/sreact.js', format: 'esm', sourcemap: true }
+    { file: 'dist/recept.umd.js', format: 'umd', name: 'recept', sourcemap: true },
+    { file: 'dist/recept.js', format: 'esm', sourcemap: true }
   ],
   plugins: [
     typescript({

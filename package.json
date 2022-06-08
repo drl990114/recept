@@ -1,8 +1,8 @@
 {
-  "name": "sreact",
-  "version": "0.0.1",
+  "name": "recept",
+  "version": "0.5.0-beta.1",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/recept.js",
   "scripts": {
     "build": "rollup -c",
     "test": "jest",
@@ -10,8 +10,8 @@
   },
   "exports": {
     ".": {
-      "import": "./dist/sreact.js",
-      "require": "./dist/sreact.umd.js"
+      "import": "./dist/recept.js",
+      "require": "./dist/recept.umd.js"
     }
   },
   "author": "halodong",
