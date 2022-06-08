@@ -1,4 +1,4 @@
-import { h } from '../src'
+import { h, Fragment } from '../src'
 
 describe('h', () => {
   it('should resolve host components correctly', () => {
@@ -29,6 +29,11 @@ describe('h', () => {
         {null}
       </div>
     )
+    const empty = (
+      <>
+        <div></div>
+      </>
+    )
     expect(div).toEqual({
       type: 'div',
       props: {
@@ -40,6 +45,19 @@ describe('h', () => {
             },
             type: '#text',
           },
+        ],
+      },
+    })
+    expect(empty).toEqual({
+      type: 'fragment',
+      props: {
+        children: [
+          {
+            type: 'div',
+            props: {
+              children: []
+            }
+          }
         ],
       },
     })
