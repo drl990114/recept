@@ -33,7 +33,7 @@ export const useReducer = (reducer: any, initialArg: any): any => {
   return ReactCurrentDispatcher.current.useReducer(reducer, initialArg)
 }
 
-export const useEffect = (cb: Function, deps?: any[]): any => {
+export const useEffect = (cb: Function, deps?: any[]): void => {
   return ReactCurrentDispatcher.current.useEffect(cb, deps)
 }
 
@@ -41,19 +41,19 @@ export const useLayoutEffect = (cb: Function, deps?: any[]): any => {
   return ReactCurrentDispatcher.current.useLayoutEffect(cb, deps)
 }
 
-export const useMemo = (cb: Function, deps?: any[]): any => {
+export const useMemo = <T = Function>(cb: () => T, deps?: any[]): T => {
   return ReactCurrentDispatcher.current.useMemo(cb, deps)
 }
 
-export const useRef = (val: any): any => {
+export const useRef = <T>(val: T): Ref<T> => {
   return ReactCurrentDispatcher.current.useMemo(() => ({ current: val }), [])
 }
 
-export const useCallback = (cb: Function, deps: any): any => {
+export const useCallback = <T extends (...args: any[]) => void>(cb: T, deps: any[]): T => {
   return ReactCurrentDispatcher.current.useMemo(() => cb, deps)
 }
 
-const mountMemo = (cb: any, deps: any): void => {
+const mountMemo = (cb: any, deps: any[]): void => {
   const hook = mountWorkInProgressHook()
   hook.memoizedState = {
     res: cb(),
@@ -62,7 +62,7 @@ const mountMemo = (cb: any, deps: any): void => {
   return hook.memoizedState.res
 }
 
-const updateMemo = (cb: any, deps: any): void => {
+const updateMemo = (cb: any, deps: any[]): void => {
   const hook = updateWorkInProgressHook()
 
   if (isChanged(hook.memoizedState.deps, deps)) {
