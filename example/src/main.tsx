@@ -1,5 +1,6 @@
 import {
   h,
+  Fragment,
   render,
   useState,
   useEffect,
@@ -19,7 +20,7 @@ import EffectDemo from './components/useEffect'
 // } from 'react'
 // import { render } from 'react-dom'
 
-export { h }
+export { h ,Fragment}
 export {
   render,
   useState,
@@ -39,10 +40,10 @@ function App(props) {
         当前：{open ? '开' : '关'}
       </button>
       {open && (
-        <div>
+        <>
           <EffectDemo />
           <h1>test</h1>
-        </div>
+        </>
       )}
       <footer>recept</footer>
     </div>

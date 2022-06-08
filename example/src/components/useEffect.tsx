@@ -1,4 +1,4 @@
-import { h, useState, useEffect } from '../main'
+import { h,Fragment, useState, useEffect } from '../main'
 
 function EffectDemo(props: any) {
   const [count, setCount] = useState(0)
@@ -23,7 +23,7 @@ function EffectDemo(props: any) {
   }, [count])
 
   return (
-    <div id="test">
+    <>
       <button onClick={() => setFrash({})}>frash</button>
       <button key="btn1" onClick={() => setCount(count + 1)}>
         +
@@ -32,7 +32,7 @@ function EffectDemo(props: any) {
       <button key="btn2" onClick={() => setCount(count - 1)}>
         -
       </button>
-    </div>
+    </>
   )
 }
 
