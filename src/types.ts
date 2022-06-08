@@ -48,3 +48,5 @@ export interface ITask {
   callback?: ITaskCallback
   fiber: SReactFiber
 }
+
+export type TReconcileChildFibers = (current: SReactFiber | null, wip: SReactFiber, newChild: any) => void
