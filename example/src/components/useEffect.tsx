@@ -1,22 +1,22 @@
-import { h, useState, useEffect } from '../../../src'
+import { h, useState, useEffect } from '../main'
 
 function EffectDemo(props: any) {
   const [count, setCount] = useState(0)
   const [frash, setFrash] = useState({})
 
   useEffect(() => {
-    console.log('once')
+    console.log('once effect')
   }, [])
 
   useEffect(() => {
-    console.log('effect 挂载', document.getElementById('test'))
+    console.log('empty deps effect mount', document.getElementById('test'))
     return () => {
-      console.log('effect 卸载', document.getElementById('test'))
+      console.log('empty deps effect unmount', document.getElementById('test'))
     }
   })
 
   useEffect(() => {
-    console.log('count change')
+    console.log('count change mount')
     return () => {
       console.log('count change unmount')
     }
