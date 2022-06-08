@@ -62,8 +62,8 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
   commitWork(currentFiber.sibling)
 }
 const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node): void => {
-  if (currentFiber.tag === HostComponent || currentFiber.tag === HostText) {
-    (currentFiber.stateNode != null) && domReturn.removeChild(currentFiber.stateNode)
+  if (currentFiber.stateNode != null) {
+    domReturn.removeChild(currentFiber.stateNode)
   } else {
     if (currentFiber?.child != null) {
       commitDeletion(currentFiber.child, domReturn)
