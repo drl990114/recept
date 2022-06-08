@@ -3,10 +3,20 @@ import { DELETION, ELEMENT_TEXT, FunctionComponent, HostComponent, HostText, PLA
 import { deletions } from './scheduler'
 
 function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFibers {
-  function deleteChild (child: SReactFiber): void {
+  function deleteChild (firstChild: SReactFiber | null | undefined, child: SReactFiber): void {
     if (!shouldTrackSideEffects) return
     child.effectTag = DELETION
     deletions.push(child)
+
+    let prevChild = firstChild
+    let nextChild = firstChild
+    while (nextChild != null && prevChild != null) {
+      if (nextChild.effectTag === DELETION) {
+        prevChild.sibling = nextChild.sibling
+      }
+      prevChild = nextChild
+      nextChild = nextChild.sibling
+    }
   }
   function createChild (returnFiber: SReactFiber, newChild: any): SReactFiber {
     const created = createFiberFromElement(newChild)
@@ -64,21 +74,22 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
       return null
     }
   }
-  function deleteRemainingChildren (wip: SReactFiber, oldFiber: SReactFiber | null | undefined): void {
-    if (oldFiber == null) return undefined
-    let childToDelete: any = oldFiber
+  function deleteRemainingChildren (wip: SReactFiber, childFiber: SReactFiber | null | undefined): void {
+    if (childFiber == null) return undefined
+    let childToDelete: any = childFiber
     while (childToDelete != null) {
-      deleteChild(childToDelete)
+      deleteChild(wip.child, childToDelete)
       childToDelete = childToDelete.sibling
     }
   }
   function reconcileChildrenArray (current: SReactFiber | null, wip: SReactFiber, newChilds: any[]): SReactFiber | null {
-    let resultingFirstChild = null
+    let resultingFirstChild: any = null
     let previousNewFiber = null
     let oldChildFiber: any = current?.child
     let nextOldFiber = null
     let newIdx = 0
     let lastPlaceIndex = 0
+
     for (; oldChildFiber != null && newIdx < newChilds.length; newIdx++) {
       nextOldFiber = oldChildFiber.sibling
       const newFiber = updateSlot(wip, oldChildFiber, newChilds[newIdx])
@@ -89,7 +100,7 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
         break
       }
       if (oldChildFiber != null && (newFiber.alternate == null)) {
-        deleteChild(oldChildFiber)
+        deleteChild(wip.child, oldChildFiber)
       }
       lastPlaceIndex = placeChild(newFiber, lastPlaceIndex, newIdx)
       if (previousNewFiber == null) {
@@ -145,7 +156,7 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
         previousNewFiber = newFiber
       }
     }
-    existingChildren.forEach((child) => deleteChild(child))
+    existingChildren.forEach((child) => deleteChild(resultingFirstChild, child))
     wip.child = resultingFirstChild!
     return resultingFirstChild
   }
