@@ -12,7 +12,7 @@ const createElement = (
   props: any,
   children: any[]
 ): SReactElement => ({
-  type,
+  type: type === Fragment ? 'fragment' : type,
   key: props?.key,
   ref: props?.ref,
   props: {
@@ -20,6 +20,10 @@ const createElement = (
     children
   }
 })
+
+export const Fragment = (props: any): SReactElement[] | SReactElement | null => {
+  return props.children
+}
 
 export const createText = (text: string | number): SReactElement => ({ type: ELEMENT_TEXT, props: { text, children: [] } })
 
