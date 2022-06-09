@@ -40,6 +40,7 @@ export interface SReactFiber<P = any> {
   alternate?: SReactFiber<P> // old
   effectTag?: symbol | null
   stateNode?: Node | null
+  siblingNode?: Node | null // Used to locate child nodes of function components
   hook?: any // hook head node
   effect?: IEffect[] | null
 }
