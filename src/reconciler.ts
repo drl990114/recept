@@ -82,6 +82,26 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
       childToDelete = childToDelete.sibling
     }
   }
+
+  function findNextStateNode (wip: SReactFiber): void {
+    let siblingNode: any = null
+    let nextFiber = wip.sibling
+    while (siblingNode === null && nextFiber != null) {
+      if (nextFiber.stateNode != null && nextFiber.effectTag !== PLACEMENT) {
+        siblingNode = nextFiber.stateNode
+      }
+      nextFiber = nextFiber.sibling
+    }
+    wip.siblingNode = siblingNode
+  }
+
+  function functionComponentNodeTag (wip: SReactFiber): void {
+    let current: any = wip
+    while (current != null) {
+      if (current.tag === FunctionComponent) findNextStateNode(current)
+      current = current.sibling
+    }
+  }
   function reconcileChildrenArray (current: SReactFiber | null, wip: SReactFiber, newChilds: any[]): SReactFiber | null {
     let resultingFirstChild: any = null
     let previousNewFiber = null
@@ -112,8 +132,9 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
       oldChildFiber = nextOldFiber
     }
 
-    if (lastPlaceIndex === newChilds.length) {
+    if (newIdx === newChilds.length) {
       deleteRemainingChildren(wip, oldChildFiber)
+      functionComponentNodeTag(resultingFirstChild)
       wip.child = resultingFirstChild!
       return resultingFirstChild
     }
@@ -130,6 +151,7 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
         }
         previousNewFiber = newFiber
       }
+      functionComponentNodeTag(resultingFirstChild)
       wip.child = resultingFirstChild!
 
       return resultingFirstChild
@@ -157,6 +179,7 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
       }
     }
     existingChildren.forEach((child) => deleteChild(resultingFirstChild, child))
+    functionComponentNodeTag(resultingFirstChild)
     wip.child = resultingFirstChild!
     return resultingFirstChild
   }

@@ -49,19 +49,26 @@ export const commitWork = (
   if (currentFiber.effectTag === PLACEMENT) {
     const nextFiber = currentFiber
     if (nextFiber.stateNode != null) {
-      let nextDOM = null
-      let sibling = nextFiber.sibling
-      while (sibling != null && nextDOM == null) {
-        if (sibling.stateNode != null && sibling.effectTag !== PLACEMENT) {
-          nextDOM = sibling.stateNode
-          break
-        }
-        sibling = sibling.sibling
-      }
-      if (nextDOM != null) {
-        domReturn.insertBefore(nextFiber.stateNode, nextDOM)
+      if (
+        nextFiber.return?.tag === FunctionComponent &&
+        nextFiber.return?.siblingNode != null
+      ) {
+        domReturn.insertBefore(nextFiber.stateNode, nextFiber.return?.siblingNode)
       } else {
-        domReturn.appendChild(nextFiber.stateNode)
+        let nextDOM = null
+        let sibling = nextFiber.sibling
+        while (sibling != null && nextDOM == null) {
+          if (sibling.stateNode != null && sibling.effectTag !== PLACEMENT) {
+            nextDOM = sibling.stateNode
+            break
+          }
+          sibling = sibling.sibling
+        }
+        if (nextDOM != null) {
+          domReturn.insertBefore(nextFiber.stateNode, nextDOM)
+        } else {
+          domReturn.appendChild(nextFiber.stateNode)
+        }
       }
     }
   } else if (currentFiber.effectTag === DELETION) {
