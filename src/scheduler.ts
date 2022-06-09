@@ -4,6 +4,7 @@ import { SReactFiber, ITask } from './types'
 import { beginWork } from './beginWork'
 import { HostRoot } from './constants'
 import { commitRoot } from './commit'
+import { isFn } from './utils'
 
 let workInProgress: any = null
 let workInProgressRoot: any = null
@@ -125,7 +126,7 @@ const flush = (): void => {
   while (job && !shouldYield()) {
     const { callback } = job as any
     job.callback = null
-    const next = callback()
+    const next = isFn(callback) && callback()
     if (next) {
       job.callback = next
     } else {

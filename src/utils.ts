@@ -1,4 +1,9 @@
-import { ELEMENT_TEXT, FunctionComponent, HostComponent, HostText } from './constants'
+import {
+  ELEMENT_TEXT,
+  FunctionComponent,
+  HostComponent,
+  HostText
+} from './constants'
 
 export const giveTag = (fiber: any): void => {
   if (fiber?.tag != null) return
@@ -13,8 +18,13 @@ export const giveTag = (fiber: any): void => {
 }
 
 export const isArr = Array.isArray
+export const isFn = (v: any): boolean => typeof v === 'function'
 
-export const setProps = (dom: HTMLElement, oldProps: any, newProps: any): void => {
+export const setProps = (
+  dom: HTMLElement,
+  oldProps: any,
+  newProps: any
+): void => {
   for (const key in oldProps) {
     if (key !== 'children') {
       if (Object.hasOwnProperty.call(newProps, key)) {
