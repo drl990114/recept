@@ -11,8 +11,7 @@ import {
   ONCE,
   NOHOOKEFFECT,
   ONCELAYOUT,
-  DEPENDEXECLAYOUT,
-  NOHOOKEFFECTLAYOUT
+  DEPENDEXECLAYOUT
 } from './constants'
 import { updateDOM } from './dom'
 import { schedule } from './scheduler'
@@ -34,7 +33,7 @@ export const commitWork = (
   if (currentFiber == null) return
   const fiberTag = currentFiber.effectTag
   schedule(() => commitHookEffectList(currentFiber, fiberTag))
-  commitHookLayoutEffectList(currentFiber)
+  commitHookLayoutEffectList(currentFiber, fiberTag)
 
   let returnFiber = currentFiber.return
   while (
@@ -53,7 +52,10 @@ export const commitWork = (
         nextFiber.return?.tag === FunctionComponent &&
         nextFiber.return?.siblingNode != null
       ) {
-        domReturn.insertBefore(nextFiber.stateNode, nextFiber.return?.siblingNode)
+        domReturn.insertBefore(
+          nextFiber.stateNode,
+          nextFiber.return?.siblingNode
+        )
       } else {
         let nextDOM = null
         let sibling = nextFiber.sibling
@@ -126,21 +128,19 @@ const commitHookEffectList = (
   const effectList = currentFiber.effect
   effectList?.forEach((effect, index) => {
     if (fiberTag === DELETION || effect.tag === DEPENDEXEC) {
-      // Unmount
       const destroy = effect.destroy
       effect.destroy = undefined
       if (destroy !== undefined) {
         destroy()
       }
+      if (fiberTag === DELETION) effect.tag = NOHOOKEFFECT
     }
     if (effect.tag === ONCE) {
-      // Mount
       const create = effect.create
       effect.destroy = create()
       effect.tag = NOHOOKEFFECT
     }
     if (effect.tag === DEPENDEXEC) {
-      // Mount
       const create = effect.create
       effect.destroy = create()
     }
@@ -152,23 +152,23 @@ const commitHookLayoutEffectList = (
   fiberTag?: any
 ): void => {
   const effectList = currentFiber.effect
+
   effectList?.forEach((effect, index) => {
+    if (effect.tag === NOHOOKEFFECT) return
     if (fiberTag === DELETION || effect.tag === DEPENDEXECLAYOUT) {
-      // Unmount
       const destroy = effect.destroy
       effect.destroy = undefined
       if (destroy !== undefined) {
         destroy()
       }
+      if (fiberTag === DELETION) effect.tag = NOHOOKEFFECT
     }
     if (effect.tag === ONCELAYOUT) {
-      // Mount
       const create = effect.create
       effect.destroy = create()
-      effect.tag = NOHOOKEFFECTLAYOUT
+      effect.tag = NOHOOKEFFECT
     }
     if (effect.tag === DEPENDEXECLAYOUT) {
-      // Mount
       const create = effect.create
       effect.destroy = create()
     }
