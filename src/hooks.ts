@@ -1,4 +1,10 @@
-import { DEPENDEXEC, DEPENDEXECLAYOUT, NOHOOKEFFECT, ONCE, ONCELAYOUT } from './constants'
+import {
+  DEPENDEXEC,
+  DEPENDEXECLAYOUT,
+  NOHOOKEFFECT,
+  ONCE,
+  ONCELAYOUT
+} from './constants'
 import { scheduleUpdateOnFiber } from './scheduler'
 import type { Ref, SReactFiber, hook, queue, IEffect } from './types'
 import { isArr } from './utils'
@@ -8,7 +14,11 @@ let currentHook: any = null // old
 let effectListIndex = 0
 const ReactCurrentDispatcher: Ref = { current: null }
 
-export const renderWithHooks = (current: SReactFiber | null, workInProgress: SReactFiber, Component: any): any => {
+export const renderWithHooks = (
+  current: SReactFiber | null,
+  workInProgress: SReactFiber,
+  Component: any
+): any => {
   currentlyRenderingFiber = workInProgress
 
   if (current != null) {
@@ -49,7 +59,10 @@ export const useRef = <T>(val: T): Ref<T> => {
   return ReactCurrentDispatcher.current.useMemo(() => ({ current: val }), [])
 }
 
-export const useCallback = <T extends (...args: any[]) => void>(cb: T, deps: any[]): T => {
+export const useCallback = <T extends (...args: any[]) => void>(
+  cb: T,
+  deps: any[]
+): T => {
   return ReactCurrentDispatcher.current.useMemo(() => cb, deps)
 }
 
@@ -91,13 +104,11 @@ const updateEffect = (cb: Function, deps?: any[]): void => {
   if (currentHook !== null) {
     const prevEffect = currentlyRenderingFiber.effect[effectListIndex]
     destroy = prevEffect.destroy
-    if (nextDeps !== null) {
-      const prevDeps = prevEffect.deps
-      if (isChanged(nextDeps, prevDeps)) {
-        updateCurrentEffect(DEPENDEXEC, cb, destroy, nextDeps)
-      } else {
-        updateCurrentEffect(NOHOOKEFFECT, cb, destroy, nextDeps)
-      }
+    const prevDeps = prevEffect.deps
+    if (isChanged(nextDeps, prevDeps)) {
+      updateCurrentEffect(DEPENDEXEC, cb, destroy, nextDeps)
+    } else {
+      updateCurrentEffect(NOHOOKEFFECT, cb, destroy, nextDeps)
     }
   }
   effectListIndex++
@@ -119,18 +130,21 @@ const updateLayoutEffect = (cb: Function, deps?: any[]): void => {
   if (currentHook !== null) {
     const prevEffect = currentlyRenderingFiber.effect[effectListIndex]
     destroy = prevEffect.destroy
-    if (nextDeps !== null) {
-      const prevDeps = prevEffect.deps
-      if (isChanged(nextDeps, prevDeps)) {
-        updateCurrentEffect(DEPENDEXECLAYOUT, cb, destroy, nextDeps)
-      } else {
-        updateCurrentEffect(NOHOOKEFFECT, cb, destroy, nextDeps)
-      }
+    const prevDeps = prevEffect.deps
+    if (isChanged(nextDeps, prevDeps)) {
+      updateCurrentEffect(DEPENDEXECLAYOUT, cb, destroy, nextDeps)
+    } else {
+      updateCurrentEffect(NOHOOKEFFECT, cb, destroy, nextDeps)
     }
   }
   effectListIndex++
 }
-const pushEffect = (tag: any, create: any, destroy: any, deps: any): IEffect => {
+const pushEffect = (
+  tag: any,
+  create: any,
+  destroy: any,
+  deps: any
+): IEffect => {
   const effect: IEffect = {
     tag,
     create,
@@ -146,7 +160,12 @@ const pushEffect = (tag: any, create: any, destroy: any, deps: any): IEffect => 
   return effect
 }
 
-const updateCurrentEffect = (tag: any, create: any, destroy: any, deps: any): void => {
+const updateCurrentEffect = (
+  tag: any,
+  create: any,
+  destroy: any,
+  deps: any
+): void => {
   currentlyRenderingFiber.effect[effectListIndex] = {
     tag,
     create,
@@ -173,11 +192,11 @@ const mountState = (initialState: any): any => {
 const mountReducer = (reducer: any, initialArg: any): any => {
   const hook = mountWorkInProgressHook()
   hook.memoizedState = initialArg
-  const queue = hook.queue = {
+  const queue = (hook.queue = {
     pending: null,
     lastRenderedReducer: reducer,
     lastRenderedState: initialArg
-  }
+  })
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
   return [queue.lastRenderedState, dispatch]
 }
@@ -191,22 +210,26 @@ const updateReducer = (reducer: any, initialArg: any): any => {
   if (pendingQueue != null) {
     const first = pendingQueue.next
     let newState = current.memoizedState
-    let update: hook |null|undefined = first
+    let update: hook | null | undefined = first
     do {
       const action = update?.action
       newState = reducer(newState, action)
       update = update?.next
     } while (update !== null && update !== first)
-    ;(queue != null) && (queue.pending = null)
+    queue != null && (queue.pending = null)
     hook.memoizedState = newState
-    ;(queue != null) && (queue.lastRenderedState = newState)
+    queue != null && (queue.lastRenderedState = newState)
   }
 
   const dispatch = dispatchAction.bind(null, currentlyRenderingFiber, queue)
   return [queue?.lastRenderedState, dispatch]
 }
 
-const dispatchAction = (currentlyRenderingFiber: SReactFiber, queue: queue, action: any): void => {
+const dispatchAction = (
+  currentlyRenderingFiber: SReactFiber,
+  queue: queue,
+  action: any
+): void => {
   const update: any = { action, next: null }
   const pending = queue.pending
   if (pending === null) {
@@ -269,7 +292,8 @@ const updateWorkInProgressHook = (): hook => {
   return workInProgressHook
 }
 
-const basicStateReducer = (state: any, action: any): any => typeof action === 'function' ? action(state) : action
+const basicStateReducer = (state: any, action: any): any =>
+  typeof action === 'function' ? action(state) : action
 
 const HookDispatcherOnMount = {
   useState: mountState,
@@ -286,9 +310,15 @@ const HookDispatcherOnUpdate = {
   useLayoutEffect: updateLayoutEffect
 }
 
-const isChanged = (a: any[], b: any[]): boolean => {
+const isChanged = (
+  a: any[] | null | undefined,
+  b: any[] | null | undefined
+): boolean => {
   if (a == null || b == null) return true
-  return a.length !== b.length || b.some((arg: any, index: number) => !Object.is(arg, a[index]))
+  return (
+    a.length !== b.length ||
+    b.some((arg: any, index: number) => !Object.is(arg, a[index]))
+  )
 }
 
 const isOnceEffect = (deps: any): boolean => {

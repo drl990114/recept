@@ -18,4 +18,3 @@ export const NOHOOKEFFECT /**             */ = Symbol.for('NOHOOKEFFECT')
 
 export const DEPENDEXECLAYOUT /**               */ = Symbol.for('DEPENDEXECLAYOUT')
 export const ONCELAYOUT /**                     */ = Symbol.for('ONCELAYOUT')
-export const NOHOOKEFFECTLAYOUT /**             */ = Symbol.for('NOHOOKEFFECTLAYOUT')
