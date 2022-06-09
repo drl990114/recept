@@ -1,23 +1,48 @@
-import { DELETION, ELEMENT_TEXT, HostComponent, HostRoot, PLACEMENT, HostText, UPDATE, DEPENDEXEC, FunctionComponent, ONCE, NOHOOKEFFECT } from './constants'
+import {
+  DELETION,
+  ELEMENT_TEXT,
+  HostComponent,
+  HostRoot,
+  PLACEMENT,
+  HostText,
+  UPDATE,
+  DEPENDEXEC,
+  FunctionComponent,
+  ONCE,
+  NOHOOKEFFECT,
+  ONCELAYOUT,
+  DEPENDEXECLAYOUT,
+  NOHOOKEFFECTLAYOUT
+} from './constants'
 import { updateDOM } from './dom'
 import { schedule } from './scheduler'
 import { SReactFiber } from './types'
 
-export const commitRoot = (workInProgressRoot: SReactFiber, deletions: any[]): void => {
+export const commitRoot = (
+  workInProgressRoot: SReactFiber,
+  deletions: any[]
+): void => {
   deletions.forEach(commitWork)
   schedule(() => commitHookEffectList(workInProgressRoot))
+  commitHookLayoutEffectList(workInProgressRoot)
   commitWork(workInProgressRoot.child)
   deletions.length = 0
 }
-export const commitWork = (currentFiber: SReactFiber | null | undefined): void => {
+export const commitWork = (
+  currentFiber: SReactFiber | null | undefined
+): void => {
   if (currentFiber == null) return
   const fiberTag = currentFiber.effectTag
   schedule(() => commitHookEffectList(currentFiber, fiberTag))
+  commitHookLayoutEffectList(currentFiber)
 
   let returnFiber = currentFiber.return
-  while (returnFiber != null && returnFiber?.tag !== HostText &&
-      returnFiber?.tag !== HostRoot &&
-      returnFiber?.tag !== HostComponent) {
+  while (
+    returnFiber != null &&
+    returnFiber?.tag !== HostText &&
+    returnFiber?.tag !== HostRoot &&
+    returnFiber?.tag !== HostComponent
+  ) {
     returnFiber = returnFiber?.return
   }
   const domReturn = returnFiber?.stateNode as Node
@@ -44,24 +69,33 @@ export const commitWork = (currentFiber: SReactFiber | null | undefined): void =
   } else if (currentFiber.effectTag === UPDATE) {
     if (currentFiber.type === ELEMENT_TEXT) {
       if (currentFiber.alternate?.props.text !== currentFiber.props.text) {
-        (currentFiber.stateNode != null) && (currentFiber.stateNode.textContent = currentFiber.props.text)
+        currentFiber.stateNode != null &&
+          (currentFiber.stateNode.textContent = currentFiber.props.text)
       }
     } else {
       if (currentFiber.tag !== FunctionComponent) {
-        updateDOM(currentFiber.stateNode as any,
-          currentFiber.alternate?.props, currentFiber.props)
+        updateDOM(
+          currentFiber.stateNode as any,
+          currentFiber.alternate?.props,
+          currentFiber.props
+        )
       }
     }
   }
 
   if (currentFiber.ref != null) {
-    typeof currentFiber.ref === 'function' ? currentFiber.ref(currentFiber.stateNode) : currentFiber.ref.current = currentFiber.stateNode
+    typeof currentFiber.ref === 'function'
+      ? currentFiber.ref(currentFiber.stateNode)
+      : (currentFiber.ref.current = currentFiber.stateNode)
   }
   currentFiber.effectTag = null
   commitWork(currentFiber.child)
   commitWork(currentFiber.sibling)
 }
-const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node): void => {
+const commitDeletion = (
+  currentFiber: SReactFiber,
+  domReturn: HTMLElement | Node
+): void => {
   if (currentFiber.stateNode != null) {
     domReturn.removeChild(currentFiber.stateNode)
   } else {
@@ -69,13 +103,16 @@ const commitDeletion = (currentFiber: SReactFiber, domReturn: HTMLElement | Node
       commitDeletion(currentFiber.child, domReturn)
     }
   }
-  commitHookEffectList(currentFiber, DELETION)
+  schedule(() => commitHookEffectList(currentFiber, DELETION))
+  commitHookLayoutEffectList(currentFiber, DELETION)
   if (currentFiber.ref != null) {
-    typeof currentFiber.ref === 'function' ? currentFiber.ref(null) : currentFiber.ref.current = null
+    typeof currentFiber.ref === 'function'
+      ? currentFiber.ref(null)
+      : (currentFiber.ref.current = null)
   }
 }
 
-export const commitHookEffectList = (
+const commitHookEffectList = (
   currentFiber: SReactFiber,
   fiberTag?: any
 ): void => {
@@ -96,6 +133,34 @@ export const commitHookEffectList = (
       effect.tag = NOHOOKEFFECT
     }
     if (effect.tag === DEPENDEXEC) {
+      // Mount
+      const create = effect.create
+      effect.destroy = create()
+    }
+  })
+}
+
+const commitHookLayoutEffectList = (
+  currentFiber: SReactFiber,
+  fiberTag?: any
+): void => {
+  const effectList = currentFiber.effect
+  effectList?.forEach((effect, index) => {
+    if (fiberTag === DELETION || effect.tag === DEPENDEXECLAYOUT) {
+      // Unmount
+      const destroy = effect.destroy
+      effect.destroy = undefined
+      if (destroy !== undefined) {
+        destroy()
+      }
+    }
+    if (effect.tag === ONCELAYOUT) {
+      // Mount
+      const create = effect.create
+      effect.destroy = create()
+      effect.tag = NOHOOKEFFECTLAYOUT
+    }
+    if (effect.tag === DEPENDEXECLAYOUT) {
       // Mount
       const create = effect.create
       effect.destroy = create()
