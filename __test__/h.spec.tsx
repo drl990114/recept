@@ -1,7 +1,8 @@
-import { h, Fragment } from '../src'
+import { h } from '../src'
 
 describe('h', () => {
   it('should resolve host components correctly', () => {
+    expect.assertions(1)
     const div = <div></div>
     expect(div).toEqual({
       type: 'div',
@@ -10,6 +11,7 @@ describe('h', () => {
   })
 
   it('should resolve function components correctly', () => {
+    expect.assertions(1)
     const App = (props: any) => {
       return <div></div>
     }
@@ -21,6 +23,7 @@ describe('h', () => {
   })
 
   it('Special values should be parsed correctly', () => {
+    expect.assertions(1)
     const div = (
       <div>
         {true}
@@ -29,11 +32,7 @@ describe('h', () => {
         {null}
       </div>
     )
-    const empty = (
-      <>
-        <div></div>
-      </>
-    )
+
     expect(div).toEqual({
       type: 'div',
       props: {
@@ -48,22 +47,10 @@ describe('h', () => {
         ],
       },
     })
-    expect(empty).toEqual({
-      type: 'fragment',
-      props: {
-        children: [
-          {
-            type: 'div',
-            props: {
-              children: []
-            }
-          }
-        ],
-      },
-    })
   })
 
   it('Child nodes in array form should be expanded', () => {
+    expect.assertions(1)
     const child = (props: any) => <li {...props}></li>
     const childs = []
 
