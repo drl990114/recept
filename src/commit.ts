@@ -92,14 +92,15 @@ export const commitWork = (
     }
   }
 
+  currentFiber.effectTag = null
+  commitWork(currentFiber.child)
+  commitWork(currentFiber.sibling)
+
   if (currentFiber.ref != null) {
     typeof currentFiber.ref === 'function'
       ? currentFiber.ref(currentFiber.stateNode)
       : (currentFiber.ref.current = currentFiber.stateNode)
   }
-  currentFiber.effectTag = null
-  commitWork(currentFiber.child)
-  commitWork(currentFiber.sibling)
 }
 const commitDeletion = (
   currentFiber: SReactFiber,
