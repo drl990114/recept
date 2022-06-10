@@ -4,32 +4,34 @@ import { testUpdates } from './testUtil'
 test('update', async () => {
   let updates = 0
 
-  const Component = () => {
+  const Component = (props: any) => {
     const [count, setState] = useState(0)
     updates++
-    const setCount = () => {
+    console.log('render',props)
+    const asyncUp = () => {
+      console.log('click')
       for (let i = 0; i <= 10; i++) {
         setState(() => i)
       }
     }
-    return <button onClick={setCount}>{count}</button>
+    return <button onClick={asyncUp}>{count}</button>
   }
 
   await testUpdates([
     {
       content: <Component />,
-      test: ([button]: HTMLButtonElement[]) => {
+      test: ([button]: any) => {
         expect(button.textContent).toEqual('0')
         expect(updates).toEqual(1)
-        button.click()
         updates = 0
+        button.click()
       },
     },
     {
       content: <Component />,
-      test: ([button]:  HTMLButtonElement[]) => {
+      test: ([button]: any) => {
         expect(button.textContent).toEqual('10')
-        expect(updates).toEqual(1)
+        expect(updates).toEqual(2)
       },
     },
   ])
