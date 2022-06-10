@@ -7,9 +7,7 @@ test('update', async () => {
   const Component = (props: any) => {
     const [count, setState] = useState(0)
     updates++
-    console.log('render',props)
     const asyncUp = () => {
-      console.log('click')
       for (let i = 0; i <= 10; i++) {
         setState(() => i)
       }
@@ -31,7 +29,7 @@ test('update', async () => {
       content: <Component />,
       test: ([button]: any) => {
         expect(button.textContent).toEqual('10')
-        expect(updates).toEqual(2)
+        expect(updates).toEqual(1)
       },
     },
   ])
