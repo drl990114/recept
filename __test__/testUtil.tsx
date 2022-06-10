@@ -1,10 +1,17 @@
 import { h, render, useEffect, useState } from '../src/index'
 
+export const asyncSetState = (fn: (val: any) => void, val: any, cb: (promiseReslove: Function) => void) => {
+  return new Promise((reslove)=>{
+    cb(reslove)
+    fn(val)
+  })
+}
+
 export const testRender = (jsx: any) => {
   return new Promise((resolve) => {
     const Wrapper = () => {
       useEffect(() => {
-        resolve(null)
+        resolve([...document.body.childNodes])
       }, [])
       return jsx
     }
@@ -26,7 +33,7 @@ export const testUpdates = async (updates: any[]) => {
   }
 
   const run = (index: number) => {
-    updates[index].test()
+    updates[index].test([...document.body.childNodes])
   }
 
   await testRender(<Component />)
@@ -43,11 +50,4 @@ export const testUpdates = async (updates: any[]) => {
     })
   }
   return
-}
-
-export const asyncSetState = (fn: (val: any) => void, val: any, cb: (promiseReslove: Function) => void) => {
-  return new Promise((reslove)=>{
-    cb(reslove)
-    fn(val)
-  })
 }
