@@ -42,5 +42,12 @@ export const testUpdates = async (updates: any[]) => {
       setContent(i)
     })
   }
-  return 
+  return
+}
+
+export const asyncSetState = (fn: (val: any) => void, val: any, cb: (promiseReslove: Function) => void) => {
+  return new Promise((reslove)=>{
+    cb(reslove)
+    fn(val)
+  })
 }
