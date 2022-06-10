@@ -115,13 +115,20 @@ const commitDeletion = (
   }
   schedule(() => commitHookEffectList(currentFiber, DELETION))
   commitHookLayoutEffectList(currentFiber, DELETION)
-  if (currentFiber.ref != null) {
+  handleSubRef(currentFiber)
+}
+
+const handleSubRef = (currentFiber: SReactFiber | undefined): void => {
+  if (currentFiber == null) return
+  handleSubRef(currentFiber?.child)
+  handleSubRef(currentFiber?.sibling)
+  if (currentFiber?.ref != null) {
     typeof currentFiber.ref === 'function'
       ? currentFiber.ref(null)
       : (currentFiber.ref.current = null)
+    currentFiber.ref = null
   }
 }
-
 const commitHookEffectList = (
   currentFiber: SReactFiber,
   fiberTag?: any
