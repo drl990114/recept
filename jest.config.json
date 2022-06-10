@@ -6,7 +6,8 @@
   "coverageProvider": "v8",
   "transform": { "^.+\\.ts?$": "ts-jest" },
   "collectCoverageFrom": [
-    "src/h.ts"
+    "src/h.ts",
+    "src/hooks.ts"
   ],
   "coverageReporters": ["json-summary", "text", "lcov"]
 }
