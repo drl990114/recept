@@ -7,18 +7,18 @@ test('update', async () => {
   const Component = () => {
     const [count, setState] = useState(0)
     updates++
-    const asyncUp = () => {
+    const setCount = () => {
       for (let i = 0; i <= 10; i++) {
         setState(() => i)
       }
     }
-    return <button onClick={asyncUp}>{count}</button>
+    return <button onClick={setCount}>{count}</button>
   }
 
   await testUpdates([
     {
       content: <Component />,
-      test: ([button]: any) => {
+      test: ([button]: HTMLButtonElement[]) => {
         expect(button.textContent).toEqual('0')
         expect(updates).toEqual(1)
         button.click()
@@ -27,7 +27,7 @@ test('update', async () => {
     },
     {
       content: <Component />,
-      test: ([button]: any) => {
+      test: ([button]:  HTMLButtonElement[]) => {
         expect(button.textContent).toEqual('10')
         expect(updates).toEqual(1)
       },

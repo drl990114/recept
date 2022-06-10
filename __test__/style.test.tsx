@@ -5,13 +5,13 @@ test('style', async () => {
   await testUpdates([
     {
       content: <h1 style={{ color: 'red' }} />,
-      test: ([h1]: any) => {
+      test: ([h1]: HTMLElement[]) => {
         expect(h1.style.color).toEqual('red')
       },
     },
     {
       content: <div />,
-      test: ([div]: any) => {
+      test: ([div]: HTMLElement[]) => {
         expect(div.style.color).toEqual('')
       },
     },
