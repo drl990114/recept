@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "recept": "0.6.0-beta.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

@@ -1,6 +1,4 @@
 import {
-  h,
-  Fragment,
   render,
   useState,
   useEffect,
@@ -20,7 +18,6 @@ import EffectDemo from './components/useEffect'
 // } from 'react'
 // import { render } from 'react-dom'
 
-export { h ,Fragment}
 export {
   render,
   useState,

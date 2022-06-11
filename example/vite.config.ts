@@ -4,7 +4,8 @@ export default {
     jsxFactory: 'h',
     jsxFragment: 'Fragment',
     target: 'esnext',
-    format: 'esm'
+    format: 'esm',
+    jsxInject: `import {h,Fragment} from 'recept'`
   },
   server: {
     port: 3000

@@ -1,4 +1,4 @@
-import { h,Fragment, useState, useEffect } from '../main'
+import { useState, useEffect } from '../main'
 
 function EffectDemo(props: any) {
   const [count, setCount] = useState(0)
