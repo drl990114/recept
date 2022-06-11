@@ -7,7 +7,7 @@
 
 
 ## Why
-代码是可以非常直观的感受某个设计模式或者代码思路以及架构的，本仓库的初衷是为了更直观的学习和探索 react ，所以在内部实现上，很多部分的代码思路几乎与 react 一致，但是实现上有所简化，所以比较适合用来了解整个调和调度程序的运作过程。在外部表现上，目前已经实现的 hook 与 react 几乎一致，所以部分合适的项目中也可以选择使用更为轻量的 recept。
+代码是可以非常直观的感受某个设计模式或者代码思路以及架构的，本仓库的初衷是为了更直观的学习和探索 react ，所以在内部实现上，很多部分的代码思路几乎与 react 一致，但是实现上有所简化，所以比较适合用来了解整个调和调度程序的运作过程。在外部表现上，目前已经实现的 hook 与 react 几乎一致。
 
 ## Use
 
@@ -30,19 +30,19 @@ render(<App />, document.getElementById('root'))
 ```
 
 ## Hooks API
-- [useState](./#usestate)
+- [useState](https://github.com/halodong/recept#usestate)
 
-- [useReducer](./#usereducer)
+- [useReducer](https://github.com/halodong/recept#usereducer)
 
-- [useEffect](./#useeffect)
+- [useEffect](https://github.com/halodong/recept#useeffect)
 
-- [useLayoutEffect](./#uselayouteffect)
+- [useLayoutEffect](https://github.com/halodong/recept#uselayouteffect)
 
-- [useCallback](./#usecallback)
+- [useCallback](https://github.com/halodong/recept#usecallback)
 
-- [useMemo](./#usememo)
+- [useMemo](https://github.com/halodong/recept#usememo)
 
-- [useRef](./#useref)
+- [useRef](https://github.com/halodong/recept#useref)
 
 #### useState
 
@@ -184,4 +184,5 @@ const App = () => {
 当前项目还处于优化阶段，后续也会继续跟进 react 的方向，补充更全面的代码注释，欢迎大家提出各种建议，也欢迎大家提 [pr](https://github.com/halodong/recept/pulls) 和 [issue](https://github.com/halodong/recept/issues/new)
 
 ## License
-Recept is [MIT licensed](./LICENSE).
+
+Recept 是基于 [MIT licensed](./LICENSE) 的.

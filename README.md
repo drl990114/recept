@@ -7,7 +7,7 @@ Lightweight react-like library. Like the name, this project is mainly based on t
 - [简体中文](./README-cn.md)
 
 ## Why
-The code can be very intuitive to feel a certain design pattern or code idea and architecture. The original intention of this repository is to learn and explore the react more intuitively, so in terms of internal implementation, many parts of the code idea are almost the same as react, but The implementation is simplified, so it is more suitable to understand the operation process of the entire reconciliation scheduler. In terms of external performance, the hooks that have been implemented so far are almost the same as those of react, so a lighter recept can also be used in some suitable projects.
+The code can be very intuitive to feel a certain design pattern or code idea and architecture. The original intention of this repository is to learn and explore the react more intuitively, so in terms of internal implementation, many parts of the code idea are almost the same as react, but The implementation is simplified, so it is more suitable to understand the operation process of the entire reconciliation scheduler. In terms of external performance, the hooks that have been implemented so far are almost the same as react.
 
 ## Use
 
@@ -30,19 +30,19 @@ render(<App />, document.getElementById('root'))
 ```
 
 ## Hooks API
-- [useState](./#usestate)
+- [useState](https://github.com/halodong/recept#usestate)
 
-- [useReducer](./#usereducer)
+- [useReducer](https://github.com/halodong/recept#usereducer)
 
-- [useEffect](./#useeffect)
+- [useEffect](https://github.com/halodong/recept#useeffect)
 
-- [useLayoutEffect](./#uselayouteffect)
+- [useLayoutEffect](https://github.com/halodong/recept#uselayouteffect)
 
-- [useCallback](./#usecallback)
+- [useCallback](https://github.com/halodong/recept#usecallback)
 
-- [useMemo](./#usememo)
+- [useMemo](https://github.com/halodong/recept#usememo)
 
-- [useRef](./#useref)
+- [useRef](https://github.com/halodong/recept#useref)
 
 #### useState
 
@@ -185,4 +185,5 @@ const App = () => {
 The current project is still in the optimization stage, and will continue to follow the direction of react in the future, adding more comprehensive code comments. You are welcome to make various suggestions, as well as [pr](https://github.com/halodong/recept/pulls) and [issue](https://github.com/halodong/recept/issues/new).
 
 ## License
+
 Recept is [MIT licensed](./LICENSE).
