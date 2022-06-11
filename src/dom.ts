@@ -2,15 +2,6 @@ import { ELEMENT_TEXT } from './constants'
 import { SReactElement, SReactFiber } from './types'
 import { setProps } from './utils'
 
-export const mountFiber = (parentDOM: Node, fiber: SReactFiber, nextDOM: Node): void => {
-  const newDOM = createDOM(fiber)
-  if (nextDOM != null) {
-    parentDOM.insertBefore(newDOM, nextDOM)
-  } else {
-    parentDOM.appendChild(newDOM)
-  }
-}
-
 export const createDOM = (fiberOrVom: SReactFiber | SReactElement): Node => {
   const dom =
   fiberOrVom.type === ELEMENT_TEXT
