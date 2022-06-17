@@ -1,3 +1,11 @@
+/**
+ * Used to process fibers that have added effectTag
+ *
+ * // TODO:
+ * 1. Change the recursive processing method to processing the collected effect list.
+ * 2. Optimize the processing of useEffect and useLayoutEffect, merge duplicate logic.
+ */
+
 import {
   DELETION,
   ELEMENT_TEXT,
