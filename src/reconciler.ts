@@ -102,7 +102,7 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
       current = current.sibling
     }
   }
-  function reconcileChildrenArray (current: SReactFiber | null, wip: SReactFiber, newChilds: any[]): SReactFiber | null {
+  function reconcileChildrenArray (current: SReactFiber | null | undefined, wip: SReactFiber, newChilds: any[]): SReactFiber | null {
     let resultingFirstChild: any = null
     let previousNewFiber = null
     let oldChildFiber: any = current?.child
@@ -193,7 +193,7 @@ function childReconciler (shouldTrackSideEffects: boolean): TReconcileChildFiber
     }
     return existingChildren
   }
-  function reconcileChildFibers (current: SReactFiber | null, wip: SReactFiber, newChild: any): void {
+  function reconcileChildFibers (current: SReactFiber | null | undefined, wip: SReactFiber, newChild: any): void {
     if (Array.isArray(newChild)) {
       reconcileChildrenArray(current, wip, newChild)
     } else {

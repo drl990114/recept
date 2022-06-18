@@ -1,4 +1,7 @@
 export type Key = string | number
+export type Dispatch<T> = (value: T, resume?: boolean) => void
+export type SetStateAction<S> = S | ((prevState: S) => S)
+export type Reducer<S, A> = (prevState: S, action: A) => S
 export interface SReactElement<P = any, T = string | Function> {
   type: T
   props: P

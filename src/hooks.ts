@@ -6,7 +6,7 @@ import {
   ONCELAYOUT
 } from './constants'
 import { scheduleUpdateOnFiber } from './scheduler'
-import type { Ref, SReactFiber, hook, queue, IEffect } from './types'
+import type { Ref, SReactFiber, hook, queue, IEffect, Dispatch, SetStateAction, Reducer } from './types'
 import { isArr } from './utils'
 let currentlyRenderingFiber: any = null
 let workInProgressHook: any = null
@@ -35,11 +35,11 @@ export const renderWithHooks = (
   return children
 }
 
-export const useState = (initialState: any): any => {
+export const useState = <T>(initialState: T): [T, Dispatch<SetStateAction<T>>] => {
   return ReactCurrentDispatcher.current.useState(initialState)
 }
 
-export const useReducer = (reducer: any, initialArg: any): any => {
+export const useReducer = <S, A>(reducer: Reducer<S, A>, initialArg: S): [S, Dispatch<A>] => {
   return ReactCurrentDispatcher.current.useReducer(reducer, initialArg)
 }
 
@@ -47,7 +47,7 @@ export const useEffect = (cb: Function, deps?: any[]): void => {
   return ReactCurrentDispatcher.current.useEffect(cb, deps)
 }
 
-export const useLayoutEffect = (cb: Function, deps?: any[]): any => {
+export const useLayoutEffect = (cb: Function, deps?: any[]): void => {
   return ReactCurrentDispatcher.current.useLayoutEffect(cb, deps)
 }
 
