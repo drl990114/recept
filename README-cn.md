@@ -9,6 +9,10 @@
 ## Why
 代码是可以非常直观的感受某个设计模式或者代码思路以及架构的，本仓库的初衷是为了更直观的学习和探索 react ，所以在内部实现上，很多部分的代码思路几乎与 react 一致，但是实现上有所简化，所以比较适合用来了解整个调和调度程序的运作过程。在外部表现上，目前已经实现的 hook 与 react 几乎一致。
 
+## Demo
+
+[CodeSandbox](https://codesandbox.io/s/broken-leaf-3r7gic?file=/src/main.tsx)
+
 ## Use
 
 `yarn add recept`
