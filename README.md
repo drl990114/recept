@@ -9,6 +9,10 @@ Lightweight react-like library. Like the name, this project is mainly based on t
 ## Why
 The code can be very intuitive to feel a certain design pattern or code idea and architecture. The original intention of this repository is to learn and explore the react more intuitively, so in terms of internal implementation, many parts of the code idea are almost the same as react, but The implementation is simplified, so it is more suitable to understand the operation process of the entire reconciliation scheduler. In terms of external performance, the hooks that have been implemented so far are almost the same as react.
 
+## Demo
+
+[CodeSandbox](https://codesandbox.io/s/broken-leaf-3r7gic?file=/src/main.tsx)
+
 ## Use
 
 `yarn add recept`
